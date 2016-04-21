@@ -8,11 +8,12 @@ public:
 	{
 		return m_id;
 	}
-	
-	void SetId(uint32 id) 
+
+	void SetId(uint32 id)
 	{
 		m_id = id;
 	}
 private:
 	uint32 m_id;
 };
+
