@@ -83,7 +83,6 @@ T *EntryManager<T, bInc>::GetEntryById(uint32 id)
 template<typename T, bool bInc>
 bool EntryManager<T, bInc>::AddEntry(T *entry)
 {
-	cout << "bInc :" << bInc << endl;
 	if(bInc)
 	{
 		uint32 id = entry->GetId();

@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <map>
 #include <vector>
-#include <string>
+#include <string.h>
 #include <pthread.h>
 
 using namespace std;
