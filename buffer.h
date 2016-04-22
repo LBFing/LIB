@@ -6,6 +6,8 @@ const unsigned int trunkSize = 64 * 1024;
 #define unzip_size(zip_size) ((zip_size) * 120 / 100 + 12)
 #define trunkCount(size) (((size) + trunkSize - 1) / trunkSize)
 
+//缓冲类，每次空间不够是扩大trunkSize大小
+//缓冲区的空间，可以重复利用
 template <typename T>
 class Buffer
 {
