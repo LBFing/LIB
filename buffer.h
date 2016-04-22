@@ -32,39 +32,40 @@ private:
 }; 
 
 template <typename T>
-void Buffer<Type>::put(const unsigned char *buf, const unsigned int size)
+void Buffer<T>::put(const unsigned char *buf, const unsigned int size)
 {
 	wr_reserve(size);
-	bcopy(buf, &m_buffer[m_currPtr], size);
+	//bcopy(buf, &m_buffer[m_currPtr], size);
+	memcpy(&m_buffer[m_currPtr],buf,size);
 	m_currPtr += size;
 }
 
 template <typename T>
-unsigned char *Buffer<Type>::wr_buf()
+unsigned char *Buffer<T>::wr_buf()
 {
 	return &m_buffer[m_currPtr];
 }
 
 template <typename T>
-unsigned char *Buffer<Type>::rd_buf()
+unsigned char *Buffer<T>::rd_buf()
 {
 	return &m_buffer[m_offPtr];
 }
 
 template <typename T>
-bool Buffer<Type>::rd_ready() const
+bool Buffer<T>::rd_ready() const
 {
 	return m_currPtr > m_offPtr;
 }
 
 template <typename T>
-unsigned int Buffer<Type>::rd_size() const
+unsigned int Buffer<T>::rd_size() const
 {
 	return m_currPtr - m_offPtr;
 }
 
 template <typename T>
-void Buffer<Type>::rd_flip(unsigned int size)
+void Buffer<T>::rd_flip(unsigned int size)
 {
 	m_offPtr += size;
 	if(m_currPtr > m_offPtr)
@@ -85,26 +86,26 @@ void Buffer<Type>::rd_flip(unsigned int size)
 }
 
 template <typename T>
-unsigned int Buffer<Type>::wr_size() const
+unsigned int Buffer<T>::wr_size() const
 {
 	return m_maxSize - m_currPtr;
 }
 
 template <typename T>
-void Buffer<Type>::wr_flip(const unsigned int size)
+void Buffer<T>::wr_flip(const unsigned int size)
 {
 	m_currPtr += size;
 }
 
 template <typename T>
-void Buffer<Type>::reset()
+void Buffer<T>::reset()
 {
 	m_offPtr = 0;
 	m_currPtr = 0;
 }
 
 template <typename T>
-unsigned int Buffer<Type>::maxSize() const
+unsigned int Buffer<T>::maxSize() const
 {
 	return m_maxSize;
 }

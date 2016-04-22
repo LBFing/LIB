@@ -3,6 +3,8 @@
 #include <iostream>
 #include <assert.h>
 #include <map>
+#include <vector>
+#include <string>
 
 using namespace std;
 
