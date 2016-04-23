@@ -1,9 +1,9 @@
 CC		=	g++
-FLAGS	= 	-Wall
+FLAGS	= 	-Wall -g
 SRCFILE	=	$(wildcard *.cpp)
 OBJS	=	$(patsubst %.cpp, %.o, $(SRCFILE))
 PROGRAM =	Main
-LIBS 	=  -lpthread
+LIBS 	=  -lpthread  -lrt
 
 defalut:	$(OBJS) $(PROGRAM)
 
@@ -11,7 +11,7 @@ defalut:	$(OBJS) $(PROGRAM)
 	$(CC) $(FLAGS) -c $< -o $@
 
 $(PROGRAM):$(OBJS)
-	$(CC) $(FLAGS) $(LIBS) -o $@ $^
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 .PHONY:clean
 clean:
 	$(RM) $(OBJS) $(PROGRAM)
