@@ -4,6 +4,9 @@
 #include "buffer.h"
 #include "timer.h"
 
+#include "tinyxml2.h"
+using namespace tinyxml2;
+
 class CTestSingle : public SingletonBase<CTestSingle>
 {
 public:
@@ -29,14 +32,14 @@ private:
 };
 
 
-void Test()
+void TestSingleTone()
 {
 	CTestSingle::newInstance();
 	CTestSingle::getInstance().Print();
 	CTestSingle::delInstance();
 }
 
-void Test1()
+void TestEntryManager()
 {
 	EntryManager<Item, false> ItemManager;
 	Item *item1 = new Item;
@@ -72,7 +75,7 @@ void Test1()
 
 }
 
-void Test2()
+void TestBuffer()
 {
 
 	typedef struct CmdType
@@ -95,7 +98,7 @@ void Test2()
 	cout << cmd_buffer.rd_size() << "  " << cmd_buffer.wr_size() << endl;
 }
 
-void Test3()
+void TestTimer()
 {
 	Time t2;
 	Time t1;
@@ -109,8 +112,8 @@ void Test3()
 
 	cout << t2.Elapse(t1) << endl;;
 
-	Timer t3(1000L);
-	uint64 count = 0;
+	//Timer t3(1000L);
+	//uint64 count = 0;
 	// while(1)
 	// {
 	// 	Time t4;
@@ -139,11 +142,36 @@ void Test3()
 	cout << "escape:" << escape / 3600 << ":" << (escape % 3600) / 60 << endl;
 }
 
+void TestXMLParse()
+{
+	XMLDocument doc;
+	doc.LoadFile("test.xml");
+	XMLElement *scene = doc.RootElement();
+	XMLElement *surface = scene->FirstChildElement("node");
+	while(surface)
+	{
+		XMLElement *surfaceChild = surface->FirstChildElement();
+		const char *content;
+		const char *name ;
+		const XMLAttribute *attributeOfSurface = surface->FirstAttribute();
+		cout << attributeOfSurface->Name() << ":" << attributeOfSurface->Value() << endl;
+		while(surfaceChild)
+		{
+			name = surfaceChild->Name();
+			content = surfaceChild->GetText();
+			surfaceChild = surfaceChild->NextSiblingElement();
+			cout << name << ":" << content << endl;
+		}
+		surface = surface->NextSiblingElement();
+	}
+}
+
 int main(int argc, char const *argv[])
 {
-	Test();
-	Test1();
-	Test2();
-	Test3();
+	//Test();
+	//Test1();
+	//Test2();
+	//Test3();
+	TestXMLParse();
 	return 0;
 }
