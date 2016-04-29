@@ -30,7 +30,7 @@
 #include <float.h>
 #include <limits.h>
 #include <ctype.h>
-#include "cJSON.h"
+#include "cjson.h"
 
 static const char *ep;
 
@@ -86,7 +86,7 @@ void cJSON_Delete(cJSON *c)
 		next=c->next;
 		if (!(c->type&cJSON_IsReference) && c->child) cJSON_Delete(c->child);
 		if (!(c->type&cJSON_IsReference) && c->valuestring) cJSON_free(c->valuestring);
-		if (c->string) cJSON_free(c->string);
+		if (c->szstr) cJSON_free(c->szstr);
 		cJSON_free(c);
 		c=next;
 	}
@@ -404,7 +404,7 @@ static const char *parse_object(cJSON *item,const char *value)
 	if (!item->child) return 0;
 	value=skip(parse_string(child,skip(value)));
 	if (!value) return 0;
-	child->string=child->valuestring;child->valuestring=0;
+	child->szstr=child->valuestring;child->valuestring=0;
 	if (*value!=':') {ep=value;return 0;}	/* fail! */
 	value=skip(parse_value(child,skip(value+1)));	/* skip any spacing, get the value. */
 	if (!value) return 0;
@@ -416,7 +416,7 @@ static const char *parse_object(cJSON *item,const char *value)
 		child->next=new_item;new_item->prev=child;child=new_item;
 		value=skip(parse_string(child,skip(value+1)));
 		if (!value) return 0;
-		child->string=child->valuestring;child->valuestring=0;
+		child->szstr=child->valuestring;child->valuestring=0;
 		if (*value!=':') {ep=value;return 0;}	/* fail! */
 		value=skip(parse_value(child,skip(value+1)));	/* skip any spacing, get the value. */
 		if (!value) return 0;
@@ -457,7 +457,7 @@ static char *print_object(cJSON *item,int depth,int fmt)
 	child=item->child;depth++;if (fmt) len+=depth;
 	while (child)
 	{
-		names[i]=str=print_string_ptr(child->string);
+		names[i]=str=print_string_ptr(child->szstr);
 		entries[i++]=ret=print_value(child,depth,fmt);
 		if (str && ret) len+=strlen(ret)+strlen(str)+2+(fmt?2+depth:0); else fail=1;
 		child=child->next;
@@ -497,30 +497,30 @@ static char *print_object(cJSON *item,int depth,int fmt)
 /* Get Array size/item / object item. */
 int    cJSON_GetArraySize(cJSON *array)							{cJSON *c=array->child;int i=0;while(c)i++,c=c->next;return i;}
 cJSON *cJSON_GetArrayItem(cJSON *array,int item)				{cJSON *c=array->child;  while (c && item>0) item--,c=c->next; return c;}
-cJSON *cJSON_GetObjectItem(cJSON *object,const char *string)	{cJSON *c=object->child; while (c && cJSON_strcasecmp(c->string,string)) c=c->next; return c;}
+cJSON *cJSON_GetObjectItem(cJSON *object,const char *szstr)	{cJSON *c=object->child; while (c && cJSON_strcasecmp(c->szstr,szstr)) c=c->next; return c;}
 
 /* Utility for array list handling. */
 static void suffix_object(cJSON *prev,cJSON *item) {prev->next=item;item->prev=prev;}
 /* Utility for handling references. */
-static cJSON *create_reference(cJSON *item) {cJSON *ref=cJSON_New_Item();if (!ref) return 0;memcpy(ref,item,sizeof(cJSON));ref->string=0;ref->type|=cJSON_IsReference;ref->next=ref->prev=0;return ref;}
+static cJSON *create_reference(cJSON *item) {cJSON *ref=cJSON_New_Item();if (!ref) return 0;memcpy(ref,item,sizeof(cJSON));ref->szstr=0;ref->type|=cJSON_IsReference;ref->next=ref->prev=0;return ref;}
 
 /* Add item to array/object. */
 void   cJSON_AddItemToArray(cJSON *array, cJSON *item)						{cJSON *c=array->child;if (!item) return; if (!c) {array->child=item;} else {while (c && c->next) c=c->next; suffix_object(c,item);}}
-void   cJSON_AddItemToObject(cJSON *object,const char *string,cJSON *item)	{if (!item) return; if (item->string) cJSON_free(item->string);item->string=cJSON_strdup(string);cJSON_AddItemToArray(object,item);}
+void   cJSON_AddItemToObject(cJSON *object,const char *szstr,cJSON *item)	{if (!item) return; if (item->szstr) cJSON_free(item->szstr);item->szstr=cJSON_strdup(szstr);cJSON_AddItemToArray(object,item);}
 void	cJSON_AddItemReferenceToArray(cJSON *array, cJSON *item)						{cJSON_AddItemToArray(array,create_reference(item));}
-void	cJSON_AddItemReferenceToObject(cJSON *object,const char *string,cJSON *item)	{cJSON_AddItemToObject(object,string,create_reference(item));}
+void	cJSON_AddItemReferenceToObject(cJSON *object,const char *szstr,cJSON *item)	{cJSON_AddItemToObject(object,szstr,create_reference(item));}
 
 cJSON *cJSON_DetachItemFromArray(cJSON *array,int which)			{cJSON *c=array->child;while (c && which>0) c=c->next,which--;if (!c) return 0;
 	if (c->prev) c->prev->next=c->next;if (c->next) c->next->prev=c->prev;if (c==array->child) array->child=c->next;c->prev=c->next=0;return c;}
 void   cJSON_DeleteItemFromArray(cJSON *array,int which)			{cJSON_Delete(cJSON_DetachItemFromArray(array,which));}
-cJSON *cJSON_DetachItemFromObject(cJSON *object,const char *string) {int i=0;cJSON *c=object->child;while (c && cJSON_strcasecmp(c->string,string)) i++,c=c->next;if (c) return cJSON_DetachItemFromArray(object,i);return 0;}
-void   cJSON_DeleteItemFromObject(cJSON *object,const char *string) {cJSON_Delete(cJSON_DetachItemFromObject(object,string));}
+cJSON *cJSON_DetachItemFromObject(cJSON *object,const char *szstr) {int i=0;cJSON *c=object->child;while (c && cJSON_strcasecmp(c->szstr,szstr)) i++,c=c->next;if (c) return cJSON_DetachItemFromArray(object,i);return 0;}
+void   cJSON_DeleteItemFromObject(cJSON *object,const char *szstr) {cJSON_Delete(cJSON_DetachItemFromObject(object,szstr));}
 
 /* Replace array/object items with new ones. */
 void   cJSON_ReplaceItemInArray(cJSON *array,int which,cJSON *newitem)		{cJSON *c=array->child;while (c && which>0) c=c->next,which--;if (!c) return;
 	newitem->next=c->next;newitem->prev=c->prev;if (newitem->next) newitem->next->prev=newitem;
 	if (c==array->child) array->child=newitem; else newitem->prev->next=newitem;c->next=c->prev=0;cJSON_Delete(c);}
-void   cJSON_ReplaceItemInObject(cJSON *object,const char *string,cJSON *newitem){int i=0;cJSON *c=object->child;while(c && cJSON_strcasecmp(c->string,string))i++,c=c->next;if(c){newitem->string=cJSON_strdup(string);cJSON_ReplaceItemInArray(object,i,newitem);}}
+void   cJSON_ReplaceItemInObject(cJSON *object,const char *szstr,cJSON *newitem){int i=0;cJSON *c=object->child;while(c && cJSON_strcasecmp(c->szstr,szstr))i++,c=c->next;if(c){newitem->szstr=cJSON_strdup(szstr);cJSON_ReplaceItemInArray(object,i,newitem);}}
 
 /* Create basic types: */
 cJSON *cJSON_CreateNull(void)					{cJSON *item=cJSON_New_Item();if(item)item->type=cJSON_NULL;return item;}
@@ -528,7 +528,7 @@ cJSON *cJSON_CreateTrue(void)					{cJSON *item=cJSON_New_Item();if(item)item->ty
 cJSON *cJSON_CreateFalse(void)					{cJSON *item=cJSON_New_Item();if(item)item->type=cJSON_False;return item;}
 cJSON *cJSON_CreateBool(int b)					{cJSON *item=cJSON_New_Item();if(item)item->type=b?cJSON_True:cJSON_False;return item;}
 cJSON *cJSON_CreateNumber(double num)			{cJSON *item=cJSON_New_Item();if(item){item->type=cJSON_Number;item->valuedouble=num;item->valueint=(int)num;}return item;}
-cJSON *cJSON_CreateString(const char *string)	{cJSON *item=cJSON_New_Item();if(item){item->type=cJSON_String;item->valuestring=cJSON_strdup(string);}return item;}
+cJSON *cJSON_CreateString(const char *szstr)	{cJSON *item=cJSON_New_Item();if(item){item->type=cJSON_String;item->valuestring=cJSON_strdup(szstr);}return item;}
 cJSON *cJSON_CreateArray(void)					{cJSON *item=cJSON_New_Item();if(item)item->type=cJSON_Array;return item;}
 cJSON *cJSON_CreateObject(void)					{cJSON *item=cJSON_New_Item();if(item)item->type=cJSON_Object;return item;}
 
@@ -550,7 +550,7 @@ cJSON *cJSON_Duplicate(cJSON *item,int recurse)
 	/* Copy over all vars */
 	newitem->type=item->type&(~cJSON_IsReference),newitem->valueint=item->valueint,newitem->valuedouble=item->valuedouble;
 	if (item->valuestring)	{newitem->valuestring=cJSON_strdup(item->valuestring);	if (!newitem->valuestring)	{cJSON_Delete(newitem);return 0;}}
-	if (item->string)		{newitem->string=cJSON_strdup(item->string);			if (!newitem->string)		{cJSON_Delete(newitem);return 0;}}
+	if (item->szstr)		{newitem->szstr=cJSON_strdup(item->szstr);			if (!newitem->szstr)		{cJSON_Delete(newitem);return 0;}}
 	/* If non-recursive, then we're done! */
 	if (!recurse) return newitem;
 	/* Walk the ->next chain for the child. */
