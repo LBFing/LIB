@@ -3,6 +3,7 @@
 #include <iostream>
 #include <assert.h>
 #include <map>
+#include <queue>
 #include <vector>
 #include <string.h>
 #include <pthread.h>

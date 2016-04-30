@@ -182,7 +182,7 @@ int TestJson()
 
 
 
-int TestMessage(int argc, char const *argv[])
+void TestMessage()
 {
 	struct Cmd
 	{
@@ -224,7 +224,6 @@ int TestMessage(int argc, char const *argv[])
 	cout << obj.m_cmd_read << endl;
 	cout << obj.m_queue.size() << endl;
 
-	return 0;
 }
 int main(int argc, char const *argv[])
 {

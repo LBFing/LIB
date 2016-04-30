@@ -1,19 +1,10 @@
 #pragma once
 
-#include <stdio.h>
-#include <iostream>
-#include <map>
-#include <queue>
-#include <stdlib.h>
-#include <string.h>
-
-using namespace std;
+#include "type_define.h"
 
 #define MAX_QUEUE_SIZE 1024
-
 typedef pair<unsigned int, unsigned char *>  CmdPair;
 typedef pair<volatile bool, CmdPair> CmdQueue;
-
 
 class MsgQueue
 {
@@ -32,6 +23,6 @@ public:
 	CmdQueue m_cmd[MAX_QUEUE_SIZE];
 	queue<CmdPair> m_queue;
 
-	unsigned int m_cmd_read;
-	unsigned int m_cmd_write;
+	uint32 m_cmd_read;
+	uint32 m_cmd_write;
 };
