@@ -9,6 +9,8 @@
 #include <time.h>
 #include <sys/time.h>
 #include <sstream>
+#include <stdio.h>
+#include <stdlib.h>
 
 using namespace std;
 

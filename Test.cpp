@@ -3,8 +3,9 @@
 #include "entry_manager.h"
 #include "buffer.h"
 #include "timer.h"
-
 #include "tinyxml2.h"
+#include "parse_json.h"
+
 using namespace tinyxml2;
 
 class CTestSingle : public SingletonBase<CTestSingle>
@@ -166,6 +167,19 @@ void TestXMLParse()
 	}
 }
 
+int TestJson()
+{
+	JSonParse dc;
+	char szFileName[] = "test.json";
+	dc.LoadFile(szFileName);
+	dc.Parse();
+	cJSON *pSub = dc.GetObjectItem("hello");
+	printf("obj_1 : %s\n", pSub->valuestring);
+	//parseJson(makeJson());
+	return 1;
+}
+
+
 int main(int argc, char const *argv[])
 {
 	//Test();
@@ -173,5 +187,6 @@ int main(int argc, char const *argv[])
 	//Test2();
 	//Test3();
 	TestXMLParse();
+	TestJson();
 	return 0;
 }
