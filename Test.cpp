@@ -261,15 +261,49 @@ void TestMysqlPool()
 
 void TestVarType()
 {
-	VarType a(65);
-	int a1 = a;
-	cout << a1 << endl;
+	uint32 nRow = 7;
+	uint32 nField = 5;
+	char szName[10] = {0};
 
-	char a2 = a;
-	cout << a2 << endl;
+	DataSet *ret_set = new DataSet(nRow, nField);
+	if(ret_set == NULL)
+	{
+		printf("error dataset new\n");
+	}
 
-	const char *a3 = (const char *)a;
-	cout << a3 << endl;
+	for(uint32 i = 0 ; i < nField; i++)
+	{
+		sprintf(szName, "Field%d", i);
+		if(ret_set->PutField(i, szName) == false)
+		{
+			printf("error PutField\n");
+			return;
+		}
+	}
+
+	// IterFeild iter1 = ret_set->m_field_set.begin();
+	// IterFeild iter2 = ret_set->m_field_set.end();
+	// while(iter1  != iter2)
+	// {
+	// 	cout << (*iter1).nIndex << ":" << (*iter1).szName << endl;
+	// 	iter1++;
+	//}
+	//cout << ret_set->m_field_set.size() << " " << ret_set->m_record.Size() << endl;
+
+	for(uint32 i = 0 ; i < nRow; i++)
+	{
+		for(uint32 j = 0 ; j < nField; j++)
+		{
+			sprintf(szName, "value_%d_%d", i, j);
+			ret_set->PutValue(i, j, szName, strlen(szName) + 1);
+		}
+	}
+
+	for(uint32 i = 0 ; i < nRow; i++)
+	{
+		const char *value = ret_set->GetValue(i, "Field1");
+		cout << "Field1:" << value << endl;
+	}
 }
 
 

@@ -2,10 +2,62 @@
 #include "type_define.h"
 #include "entry.h"
 #include "timer.h"
+#include "entry_manager.h"
+#include "var_type.h"
 
 #include <mysql.h>
+static VarType VAR_NULL;
 
-class MysqlPool;
+struct MysqlField
+{
+	char szName[128];
+	uint32 nIndex;
+	MysqlField()
+	{
+		bzero(szName, 0);
+		nIndex = 0;
+	}
+	bool operator< (const MysqlField& field) const
+	{
+		return strcmp(szName, field.szName);
+	}
+};
+
+
+
+
+class MysqlRow : public Entry
+{
+public:
+	explicit MysqlRow(uint32 nField);
+	~MysqlRow();
+	void SetField(uint32 nField);
+	void SetValue(uint32 nField, const char *value, uint32 nLen);
+	VarType& GetValue(uint32 nField);
+
+private:
+	vector<VarType> m_value;
+};
+
+
+class DataSet
+{
+public:
+	explicit DataSet(uint32 nRow, uint32 nField);
+	~DataSet();
+	bool PutField(uint32 nField, const char *szName);
+	void PutValue(uint32 nRow, uint32 nField, const char *value , uint32 nLen);
+	VarType& GetValue(uint32 nRow, const char *szName);
+
+private:
+	typedef set<MysqlField> SetField;
+	typedef SetField::iterator IterFeild;
+
+	SetField m_field_set;
+	EntryManager<MysqlRow, true> m_record;
+
+};
+
 
 
 enum HandleState
@@ -16,7 +68,7 @@ enum HandleState
 };
 
 
-struct MysqlUrl : public Entry
+struct MysqlUrl
 {
 	const std::string url;
 	std::string host;
@@ -26,7 +78,7 @@ struct MysqlUrl : public Entry
 	std::string dbname;
 };
 
-
+class MysqlPool;
 class MysqlHandle : public Entry
 {
 public:
