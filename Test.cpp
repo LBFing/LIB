@@ -7,6 +7,8 @@
 #include "parse_json.h"
 #include "message_queue.h"
 #include "regex_parse.h"
+#include "mysql_pool.h"
+#include "var_type.h"
 
 using namespace tinyxml2;
 
@@ -186,7 +188,7 @@ int TestRegex()
 {
 
 	Regex re;
-	int port = 3306;
+	//int port = 3306;
 	string player;
 	string passwd;
 	string host;
@@ -200,7 +202,7 @@ int TestRegex()
 		re.GetSub(passwd, 2);
 		re.GetSub(host, 3);
 		re.GetSub(port_str, 4);
-		port = atoi(port_str.c_str());
+		//port = atoi(port_str.c_str());
 		re.GetSub(dbname, 5);
 		printf("%s, %s, %s, %s, %s\n", player.c_str(), passwd.c_str(), host.c_str(), port_str.c_str(), dbname.c_str());
 	}
@@ -250,11 +252,36 @@ void TestMessage()
 	cout << obj.m_queue.size() << endl;
 
 }
+
+void TestMysqlPool()
+{
+	MysqlPool obj(111);
+}
+
+
+void TestVarType()
+{
+	VarType a(65);
+	int a1 = a;
+	cout << a1 << endl;
+
+	char a2 = a;
+	cout << a2 << endl;
+
+	const char *a3 = (const char *)a;
+	cout << a3 << endl;
+}
+
+
 int main(int argc, char const *argv[])
 {
 	//TestXMLParse();
 	//TestJson();
 	//TestMessage();
-	TestRegex();
+	//TestRegex();
+	TestMysqlPool();
+	TestVarType();
+
+
 	return 0;
 }

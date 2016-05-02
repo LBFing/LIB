@@ -21,6 +21,9 @@ public:
 	virtual ~EntryManager();
 	T *GetEntryById(uint32 id);
 	bool AddEntry(T *entry);
+	void RemoveEntry(T *entry);
+	void RemoveEntryById(uint32 id);
+	void RemoveAllEntry();
 	uint32 Size() {return m_mapEntry.size();}
 
 	template <typename T1>
@@ -35,6 +38,8 @@ public:
 		}
 		return true;
 	}
+private:
+	void ClearAll();
 private:
 	typedef map<uint32, T *> EntryMap;
 	typedef typename EntryMap::iterator EntryMapIter;
@@ -55,15 +60,7 @@ EntryManager<T, bInc>::EntryManager()
 template<typename T, bool bInc>
 EntryManager<T, bInc>::~EntryManager()
 {
-	for(EntryMapIter iter = m_mapEntry.begin(); iter != m_mapEntry.end(); iter++)
-	{
-		if(iter->second != NULL)
-		{
-			delete iter->second;
-			iter->second = NULL;
-		}
-	}
-	m_mapEntry.clear();
+	ClearAll();
 }
 
 template<typename T, bool bInc>
@@ -105,4 +102,45 @@ bool EntryManager<T, bInc>::AddEntry(T *entry)
 		return true;
 	}
 
+}
+
+template<typename T, bool bInc>
+void EntryManager<T, bInc>::RemoveEntry(T *entry)
+{
+	m_mapEntry.erase(entry);
+	if(entry)
+	{
+		delete entry;
+		entry = NULL;
+	}
+}
+
+template<typename T, bool bInc>
+void EntryManager<T, bInc>::RemoveEntryById(uint32 id)
+{
+	T *entry = GetEntryById(id);
+	if(entry)
+	{
+		RemoveEntry(entry);
+	}
+}
+
+template<typename T, bool bInc>
+void EntryManager<T, bInc>::RemoveAllEntry()
+{
+	ClearAll();
+}
+
+template<typename T, bool bInc>
+void EntryManager<T, bInc>::ClearAll()
+{
+	for(EntryMapIter iter = m_mapEntry.begin(); iter != m_mapEntry.end(); iter++)
+	{
+		if(iter->second != NULL)
+		{
+			delete iter->second;
+			iter->second = NULL;
+		}
+	}
+	m_mapEntry.clear();
 }
