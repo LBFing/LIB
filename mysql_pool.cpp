@@ -109,3 +109,86 @@ MysqlPool::~MysqlPool()
 {
 
 }
+
+
+bool MysqlPool::PutUrl(const unsigned int id, const char *szUrl)
+{
+	MysqlUrl * mysql_url = new MysqlURL(szUrl);
+	if(mysql_url == NULL)
+	{
+		return false;
+	}
+
+	MysqlHandle* handle = new MysqlHandle(mysql_url,this,id);
+	if(handle == NULL)
+	{
+		delete mysql_url;
+		mysql_url = NULL;
+		return false;
+	}
+
+	if (handle->InitMysql() == false)
+	{
+		delete mysql_url;
+		mysql_url = NULL;
+		delete handle;
+		handle = NULL;
+		return false;
+	}
+
+	if (m_mum.AddEntry(handle) ==false)
+	{
+		delete mysql_url;
+		mysql_url = NULL;
+		delete handle;
+		handle = NULL;
+		return false;
+	}
+	return true;
+}
+
+
+MysqlHandle *MysqlPool::getHandle()
+{
+
+	struct GetHandleExec :public Callback<MysqlHandle>
+	{
+		GetHandleExec():_handle(NULL)
+		{
+		}
+		MysqlHandle *_handle;
+		bool exec(MysqlHandle *entry)
+		{
+			switch(entry->m_state)
+			{
+				case HandleState_Valid:
+				case HandleState_Invalid:
+					{
+						if(entry->SetHandle())
+						{
+							_handle = entry;
+							return false;
+						}
+					}
+					break;
+				case HandleState_Used:
+					{
+						entry->CheckUseTime();
+					}
+					break;
+			}
+			return true;
+		}
+	};
+	GetHandleExec Exec;
+	m_hm->execEveryEntry<>(Exec)
+	return exec._handle;
+}
+
+void MysqlPool::PutHandle(MysqlHandle *handle)
+{
+	if(handle)
+	{
+		handle->FreeHandle();
+	}
+}
