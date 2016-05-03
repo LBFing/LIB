@@ -107,7 +107,7 @@ bool EntryManager<T, bInc>::AddEntry(T *entry)
 template<typename T, bool bInc>
 void EntryManager<T, bInc>::RemoveEntry(T *entry)
 {
-	m_mapEntry.erase(entry);
+	m_mapEntry.erase(entry->GetId());
 	if(entry)
 	{
 		delete entry;

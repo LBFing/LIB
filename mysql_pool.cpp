@@ -1,7 +1,5 @@
 #include "mysql_pool.h"
 
-
-
 MysqlRow::MysqlRow(uint32 nField)
 {
 	SetField(nField);
@@ -54,15 +52,12 @@ DataSet::DataSet(uint32 nRow, uint32 nField)
 DataSet::~DataSet()
 {
 	m_record.RemoveAllEntry();
-	m_field_set.clear();
+	m_field_map.clear();
 }
 
 bool DataSet::PutField(uint32 nField, const char *szName)
 {
-	MysqlField field;
-	strncpy(field.szName, szName, 127);
-	field.nIndex = nField;
-	return m_field_set.insert(field).second;
+	return m_field_map.insert(make_pair(szName, nField)).second;
 }
 
 void DataSet::PutValue(uint32 nRow, uint32 nField, const char *value , uint32 nLen)
@@ -74,12 +69,10 @@ void DataSet::PutValue(uint32 nRow, uint32 nField, const char *value , uint32 nL
 	}
 }
 
-VarType& DataSet::GetValue(uint32 nRow, const char *szName)
+VarType& DataSet::GetValue(uint32 nRow, string strName)
 {
-	MysqlField field;
-	strncpy(field.szName, szName, 127);
-	IterFeild iter_field = m_field_set.find(field);
-	if(iter_field == m_field_set.end())
+	map<string, uint32>::iterator iter = m_field_map.find(strName);
+	if(iter == m_field_map.end())
 	{
 		return VAR_NULL;
 	}
@@ -87,13 +80,20 @@ VarType& DataSet::GetValue(uint32 nRow, const char *szName)
 	MysqlRow *row =  m_record.GetEntryById(nRow);
 	if(row)
 	{
-		return row->GetValue(iter_field->nIndex);
+		return row->GetValue(iter->second);
 	}
 	else
 	{
 		return VAR_NULL;
 	}
+
 }
+
+uint32 DataSet::Size()
+{
+	return m_record.Size();
+}
+
 
 MysqlPool::MysqlPool(int mMaxHandle)
 {
@@ -107,39 +107,38 @@ MysqlPool::MysqlPool(int mMaxHandle)
 
 MysqlPool::~MysqlPool()
 {
-
+	m_mum.RemoveAllEntry();
+	m_murl.RemoveAllEntry();
 }
 
 
-bool MysqlPool::PutUrl(const unsigned int id, const char *szUrl)
+bool MysqlPool::PutUrl(const char *szUrl, const unsigned int id)
 {
-	MysqlUrl * mysql_url = new MysqlURL(szUrl);
+	MysqlUrl *mysql_url = new MysqlUrl(szUrl);
 	if(mysql_url == NULL)
 	{
 		return false;
 	}
+	mysql_url->SetId(id);
+	m_murl.AddEntry(mysql_url);
 
-	MysqlHandle* handle = new MysqlHandle(mysql_url,this,id);
+	MysqlHandle *handle = new MysqlHandle(mysql_url, this, id);
 	if(handle == NULL)
 	{
-		delete mysql_url;
-		mysql_url = NULL;
+		m_murl.RemoveEntry(mysql_url);
 		return false;
 	}
 
-	if (handle->InitMysql() == false)
+	if(handle->InitMysql() == false)
 	{
-		delete mysql_url;
-		mysql_url = NULL;
-		delete handle;
-		handle = NULL;
+		m_murl.RemoveEntry(mysql_url);
 		return false;
 	}
 
-	if (m_mum.AddEntry(handle) ==false)
+	if(m_mum.AddEntry(handle) == false)
 	{
-		delete mysql_url;
-		mysql_url = NULL;
+		m_murl.RemoveEntry(mysql_url);
+		handle->FinalHandle();
 		delete handle;
 		handle = NULL;
 		return false;
@@ -148,15 +147,13 @@ bool MysqlPool::PutUrl(const unsigned int id, const char *szUrl)
 }
 
 
-MysqlHandle *MysqlPool::getHandle()
+MysqlHandle *MysqlPool::GetHandle(uint32 id)
 {
 
-	struct GetHandleExec :public Callback<MysqlHandle>
+	struct GetHandleExec : public Callback<MysqlHandle>
 	{
-		GetHandleExec():_handle(NULL)
-		{
-		}
 		MysqlHandle *_handle;
+		GetHandleExec(): _handle(NULL) {}
 		bool exec(MysqlHandle *entry)
 		{
 			switch(entry->m_state)
@@ -176,13 +173,53 @@ MysqlHandle *MysqlPool::getHandle()
 						entry->CheckUseTime();
 					}
 					break;
+				default:
+					break;
 			}
 			return true;
 		}
 	};
 	GetHandleExec Exec;
-	m_hm->execEveryEntry<>(Exec)
-	return exec._handle;
+	while(true)
+	{
+		m_mum.execEveryEntry<>(Exec);
+		if(Exec._handle)
+		{
+			return Exec._handle;
+		}
+		if(m_mum.Size() < m_max_handle)
+		{
+			MysqlUrl *url = m_murl.GetEntryById(id);
+			if(url == NULL)
+			{
+				return NULL;
+			}
+
+			MysqlHandle *handle = new MysqlHandle(url, this, id);
+			if(handle == NULL)
+			{
+				return NULL;
+			}
+
+			if(handle->InitMysql() == false)
+			{
+				delete handle;
+				handle = NULL;
+				return NULL;
+			}
+
+			if(m_mum.AddEntry(handle) == false)
+			{
+				handle->FinalHandle();
+				delete handle;
+				handle = NULL;
+				return NULL;
+			}
+			return handle;
+		}
+		usleep(1000 * 50);
+	}
+	return NULL;
 }
 
 void MysqlPool::PutHandle(MysqlHandle *handle)

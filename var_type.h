@@ -90,7 +90,6 @@ inline void VarType::put(const void *data, const unsigned int len)
 template <typename T>
 inline void VarType::put(const T& value)
 {
-	cout << "put 2" << endl;
 	std::ostringstream oss;
 	oss << value;
 	m_data.resize(oss.str().length() + 1);
@@ -129,7 +128,6 @@ inline VarType::operator unsigned int() const
 
 inline VarType::operator int() const
 {
-	cout << "operator int()" << endl;
 	return atoi((const char *)(*this));;
 }
 
