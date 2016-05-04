@@ -9,6 +9,7 @@
 #include "regex_parse.h"
 #include "mysql_pool.h"
 #include "var_type.h"
+#include "logger.h"
 
 using namespace tinyxml2;
 
@@ -343,18 +344,23 @@ void TestVarType()
 	for(uint32 i = 0 ; i < nRow; i++)
 	{
 		const char *value = ret_set->GetValue(i, "Field1");
-		cout << "Field1:" << value << endl;
+		//cout << "Field1:" << value << endl;
+		DEBUG("Field1:%s", value);
+		INFO("Field1:%s", value);
+		WARN("Field1:%s", value);
+		ERROR("Field1:%s", value);
 	}
 }
 
 
 int main(int argc, char const *argv[])
 {
+	InitLogger("test.log", "DEBUG");
 	//TestXMLParse();
 	//TestJson();
 	//TestMessage();
 	//TestRegex();
-	//TestVarType();
+	TestVarType();
 	TestMysqlPool();
 
 

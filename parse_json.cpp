@@ -1,4 +1,5 @@
 #include "parse_json.h"
+#include "logger.h"
 
 JSonParse::JSonParse()
 {
@@ -23,7 +24,7 @@ bool JSonParse::LoadFile(const char *szFileName)
 	FILE *pFile = fopen(szFileName, "rb");
 	if(pFile == NULL)
 	{
-		fputs("File error", stderr);
+		ERROR("File error");
 		return false;
 	}
 
@@ -36,7 +37,7 @@ bool JSonParse::LoadFile(const char *szFileName)
 	m_filebuf = new char [lSize + 1];
 	if(m_filebuf == NULL)
 	{
-		fputs("Memory error", stderr);
+		ERROR("Memory error");
 		return false;
 	}
 

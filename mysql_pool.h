@@ -91,8 +91,7 @@ class MysqlHandle : public Entry
 {
 public:
 	MysqlHandle(const MysqlUrl *url, MysqlPool *pool, uint32 id);
-	~MysqlHandle()
-
+	~MysqlHandle();
 	inline MYSQL *GetMysql() {return m_mysql;}
 	bool InitMysql();
 	void FinalHandle();

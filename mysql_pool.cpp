@@ -1,4 +1,5 @@
 #include "mysql_pool.h"
+#include "logger.h"
 
 MysqlRow::MysqlRow(uint32 nField)
 {
@@ -132,7 +133,7 @@ void MysqlHandle::FinalHandle()
 {
 	if(m_mysql)
 	{
-		printf("InitHandle():The mysql connect will been closed...\n");
+		DEBUG("InitHandle():The mysql connect will been closed...");
 		mysql_close(m_mysql);
 		m_mysql = NULL;
 	}
@@ -170,7 +171,7 @@ void MysqlHandle::CheckUseTime()
 {
 	if(m_use_time.Elapse(Time()) > m_timet_out)
 	{
-		printf("sql语句超时:%ums,描述:%s \n", m_timet_out, m_last_sql.c_str());
+		WARN("sql语句超时:%ums,描述:%s", m_timet_out, m_last_sql.c_str());
 		m_timet_out += 10000L;
 	}
 }
@@ -185,7 +186,7 @@ int MysqlHandle::ExecSql(const char *szSql, uint32 nLen, bool need_errlog)
 	int nRet = mysql_real_query(m_mysql, szSql, nLen);
 	if(nRet && need_errlog)
 	{
-		printf("SQL:%s  Error:%s\n", szSql, mysql_error(m_mysql));
+		ERROR("SQL:%s  Error:%s", szSql, mysql_error(m_mysql));
 	}
 	return nRet;
 }
@@ -194,20 +195,20 @@ DataSet *MysqlHandle::ExeSelect(const char *szSql, unsigned int nLen)
 {
 	if(m_mysql == NULL)
 	{
-		printf("NULL m_mysql Error. ---- %s\n", szSql);
+		ERROR("NULL m_mysql Error. ---- %s", szSql);
 		return NULL;
 	}
 	m_select_time.Now();
 	if(ExecSql(szSql, nLen))
 	{
-		printf("ExeSelect Error. ---- %s\n", szSql);
+		ERROR("ExeSelect Error. ---- %s", szSql);
 		return NULL;
 	}
 
 	MYSQL_RES *result = mysql_store_result(m_mysql);
 	if(result == NULL)
 	{
-		printf("Result Get Error:%s\n", mysql_error(m_mysql));
+		ERROR("Result Get Error:%s", mysql_error(m_mysql));
 		return NULL;
 	}
 	uint32 nRow =  mysql_num_rows(result);
@@ -229,7 +230,7 @@ DataSet *MysqlHandle::ExeSelect(const char *szSql, unsigned int nLen)
 	{
 		if(ret_set->PutField(i, mysql_fields[i].name) == false)
 		{
-			printf("error PutField\n");
+			ERROR("error PutField");
 			mysql_free_result(result);
 			delete ret_set;
 			ret_set = NULL;
@@ -274,7 +275,7 @@ bool MysqlHandle::InitHandle()
 {
 	if(m_mysql)
 	{
-		printf("InitHandle():The mysql connect will been closed...\n");
+		ERROR("InitHandle():The mysql connect will been closed...");
 		mysql_close(m_mysql);
 		m_mysql = NULL;
 	}
@@ -282,16 +283,16 @@ bool MysqlHandle::InitHandle()
 	m_mysql = mysql_init(NULL);
 	if(m_mysql == NULL)
 	{
-		printf("InitHandle():Initiate mysql MERROR...\n");
+		ERROR("InitHandle():Initiate mysql MERROR...");
 		return false;
 	}
 
 	if(mysql_real_connect(m_mysql, m_url->m_host.c_str(), m_url->m_user.c_str(), m_url->m_passwd.c_str(), m_url->m_dbname.c_str(), m_url->m_port, NULL, CLIENT_COMPRESS | CLIENT_INTERACTIVE) == NULL)
 	{
-		printf("InitHandle():connect mysql://%s:%u/%s failed...\n", m_url->m_host.c_str(), m_url->m_port, m_url->m_dbname.c_str());
+		ERROR("InitHandle():connect mysql://%s:%u/%s failed...", m_url->m_host.c_str(), m_url->m_port, m_url->m_dbname.c_str());
 		return false;
 	}
-	printf("initMysql():connect mysql://%s:%u/%s successful...\n", m_url->m_host.c_str(), m_url->m_port, m_url->m_dbname.c_str());
+	INFO("initMysql():connect mysql://%s:%u/%s successful...", m_url->m_host.c_str(), m_url->m_port, m_url->m_dbname.c_str());
 	m_state = HandleState_Valid;
 	m_life_time.Now();
 	m_count = 0;
@@ -302,10 +303,10 @@ bool MysqlHandle::InitHandle()
 MysqlPool::MysqlPool(int mMaxHandle)
 {
 	m_max_handle = mMaxHandle;
-	printf("Version of the mysql libs is %s\n" , mysql_get_client_info());
+	INFO("Version of the mysql libs is %s" , mysql_get_client_info());
 	if(!mysql_thread_safe())
 	{
-		printf("The mysql libs is not thread safe...\n");
+		WARN("The mysql libs is not thread safe...");
 	}
 }
 

@@ -33,7 +33,7 @@ public:
 	void setLogFileName(const std::string& name) { _filename = name; }
 private:
 	void log(const char *msg, LoggerLevel level);
-	void writeLogToConsole(const char *msg,LoggerLevel level);
+	void writeLogToConsole(const char *msg, LoggerLevel level);
 	void writeLogToFile(const char *msg);
 private:
 
@@ -51,9 +51,11 @@ private:
 
 Logger& SetLoggerHead(Logger& logger, const char *filename, const uint32 line);
 void SetLoggerHead(const char *class_name, const uint32& id, const char *name, const char *filename, const uint32& line);
-void InitLogger(const string filename,const char* Level);
+void InitLogger(const string filename, const char *Level);
+
+extern Logger *logger;
 
 #define DEBUG	SetLoggerHead( *logger, __FILE__, __LINE__ ).debug
-#define TRACE	SetLoggerHead( *logger, __FILE__, __LINE__ ).trace
 #define INFO	SetLoggerHead( *logger, __FILE__, __LINE__ ).info
 #define WARN	SetLoggerHead( *logger, __FILE__, __LINE__ ).warn
+#define ERROR	SetLoggerHead( *logger, __FILE__, __LINE__ ).error
