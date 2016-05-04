@@ -158,7 +158,7 @@ void Logger::log(const char* msg,LoggerLevel level)
 	_mutex.lock();
 	if(_need_console)
 	{
-		writeLogToConsole(lbuf);
+		writeLogToConsole(lbuf,level);
 	}
 	if(_need_logfile)
 	{
@@ -167,9 +167,35 @@ void Logger::log(const char* msg,LoggerLevel level)
 	_mutex.unlock();
 }
 
-void Logger::writeLogToConsole(const char* msg)
+void Logger::writeLogToConsole(const char* msg,LoggerLevel level)
 {
-	printf("%s\n",msg);
+	char pre[12] = {0};
+	char post[10] = "\033[0m";
+	switch(level)
+	{
+		case LoggerLevel_Debug:
+			{
+				bzero(post,10);
+			}
+			break;
+		case LoggerLevel_Info:
+			{
+				strcmp(pre,"\033[32;1m")
+			}
+			break;
+		case LoggerLevel_Warn:
+			{
+				strcmp(pre,"\033[33;1m")
+			}
+			break;
+		case LoggerLevel_Error:
+			{
+				strcmp(pre,"\033[31;1m")
+			}
+			break;
+		default:break;
+	}
+	printf("%s%s%s\n",pre,msg,post);
 }
 
 void Logger::writeLogToFile(const char* msg)

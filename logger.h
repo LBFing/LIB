@@ -33,7 +33,7 @@ public:
 	void setLogFileName(const std::string& name) { _filename = name; }
 private:
 	void log(const char *msg, LoggerLevel level);
-	void writeLogToConsole(const char *msg);
+	void writeLogToConsole(const char *msg,LoggerLevel level);
 	void writeLogToFile(const char *msg);
 private:
 
