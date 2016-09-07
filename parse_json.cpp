@@ -18,10 +18,10 @@ JSonParse::~JSonParse()
 	}
 }
 
-bool JSonParse::LoadFile(const char *szFileName)
+bool JSonParse::LoadFile(const char* szFileName)
 {
 	/* 若要一个byte不漏地读入整个文件，只能采用二进制方式打开 */
-	FILE *pFile = fopen(szFileName, "rb");
+	FILE* pFile = fopen(szFileName, "rb");
 	if(pFile == NULL)
 	{
 		ERROR("File error");
@@ -45,7 +45,7 @@ bool JSonParse::LoadFile(const char *szFileName)
 	size_t result = fread(m_filebuf, lSize, 1, pFile);
 	if(result == 0)
 	{
-		printf("result :%d size:%d", result, lSize);
+		printf("result :%ld size:%ld", result, lSize);
 		fputs("Reading error", stderr);
 		return false;
 	}
@@ -72,12 +72,12 @@ bool JSonParse::Parse()
 	return true;
 }
 
-cJSON *JSonParse::GetObjectItem(const char *szkey)
+cJSON* JSonParse::GetObjectItem(const char* szkey)
 {
 	return cJSON_GetObjectItem(m_pJson, szkey);
 }
 
-cJSON *JSonParse::GetObjectItemEx(cJSON *pJson, const char *szkey)
+cJSON* JSonParse::GetObjectItemEx(cJSON* pJson, const char* szkey)
 {
 	return cJSON_GetObjectItem(pJson, szkey);
 }

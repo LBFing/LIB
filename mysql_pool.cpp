@@ -423,6 +423,7 @@ MysqlHandle *MysqlPool::GetHandle(uint32 id)
 			return handle;
 		}
 		usleep(1000 * 50);
+		
 	}
 	return NULL;
 }

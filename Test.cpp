@@ -257,7 +257,7 @@ void TestMessage()
 void TestMysqlPool()
 {
 	MysqlPool obj(111);
-	string str = "mysql://root:libenfei@127.0.0.1:3306/LBF";
+	string str = "mysql://root:123456@127.0.0.1:3306/LBF";
 	bool bRet = obj.PutUrl(str.c_str(), 1);
 	if(bRet)
 	{
@@ -346,9 +346,9 @@ void TestVarType()
 		const char *value = ret_set->GetValue(i, "Field1");
 		//cout << "Field1:" << value << endl;
 		DEBUG("Field1:%s", value);
-		INFO("Field1:%s", value);
-		WARN("Field1:%s", value);
-		ERROR("Field1:%s", value);
+		//INFO("Field1:%s", value);
+		//WARN("Field1:%s", value);
+		//ERROR("Field1:%s", value);
 	}
 }
 

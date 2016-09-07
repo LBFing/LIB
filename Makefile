@@ -4,7 +4,7 @@ SRCFILE	=	$(wildcard *.cpp)
 OBJS	=	$(patsubst %.cpp, %.o, $(SRCFILE))
 PROGRAM =	Main
 LIBS 	=  -lpthread  -lrt
-INC 	= 
+INC 	=
 
 LIBS_MYSQL= ${shell mysql_config --libs_r}
 CPPFLAGS_MYSQL=${shell mysql_config --cflags}

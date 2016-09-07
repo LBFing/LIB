@@ -1,0 +1,4 @@
+Main
+*.o
+pb_proto/protobuf/
+test.*
