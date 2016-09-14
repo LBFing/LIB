@@ -152,7 +152,7 @@ void TestTimer()
 void TestXMLParse()
 {
 	XMLDocument doc;
-	doc.LoadFile("test.xml");
+	doc.LoadFile("config/test.xml");
 	XMLElement* scene = doc.RootElement();
 	XMLElement* surface = scene->FirstChildElement("node");
 	while(surface)
@@ -176,7 +176,7 @@ void TestXMLParse()
 int TestJson()
 {
 	JSonParse dc;
-	char szFileName[] = "test.json";
+	char szFileName[] = "config/test.json";
 	dc.LoadFile(szFileName);
 	dc.Parse();
 	cJSON* pSub = dc.GetObjectItem("hello");
@@ -360,7 +360,7 @@ void TestSigal()
 
 int main(int argc, char const* argv[])
 {
-	InitLogger("test.log", "DEBUG");
+	InitLogger("log/test.log", "DEBUG");
 	//TestXMLParse();
 	//TestJson();
 	//TestMessage();
