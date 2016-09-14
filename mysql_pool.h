@@ -16,7 +16,7 @@ public:
 	explicit MysqlRow(uint32 nField);
 	~MysqlRow();
 	void SetField(uint32 nField);
-	void SetValue(uint32 nField, const char *value, uint32 nLen);
+	void SetValue(uint32 nField, const char* value, uint32 nLen);
 	VarType& GetValue(uint32 nField);
 
 private:
@@ -29,8 +29,8 @@ class DataSet
 public:
 	explicit DataSet(uint32 nRow, uint32 nField);
 	~DataSet();
-	bool PutField(uint32 nField, const char *szName);
-	void PutValue(uint32 nRow, uint32 nField, const char *value , uint32 nLen);
+	bool PutField(uint32 nField, const char* szName);
+	void PutValue(uint32 nRow, uint32 nField, const char* value , uint32 nLen);
 	VarType& GetValue(uint32 nRow, string strName);
 	uint32 Size();
 public:
@@ -52,7 +52,7 @@ enum HandleState
 class MysqlUrl : public Entry
 {
 public:
-	explicit MysqlUrl(const char *szUrl)
+	explicit MysqlUrl(const char* szUrl)
 	{
 		m_url = szUrl;
 		ParseUrl();
@@ -90,27 +90,27 @@ class MysqlPool;
 class MysqlHandle : public Entry
 {
 public:
-	MysqlHandle(const MysqlUrl *url, MysqlPool *pool, uint32 id);
+	MysqlHandle(const MysqlUrl* url, MysqlPool* pool, uint32 id);
 	~MysqlHandle();
-	inline MYSQL *GetMysql() {return m_mysql;}
+	inline MYSQL* GetMysql() {return m_mysql;}
 	bool InitMysql();
 	void FinalHandle();
 	bool SetHandle();
 	void FreeHandle();
 	void CheckUseTime();
-	int ExecSql(const char *szSql, uint32 nLen, bool need_errlog = true);
-	DataSet *ExeSelect(const char *szSql, unsigned int nLen);
-	char *escapeString(const char *szSrc, char *szDest, unsigned int size);
+	int ExecSql(const char* szSql, uint32 nLen, bool need_errlog = true);
+	DataSet* ExeSelect(const char* szSql, unsigned int nLen);
+	char* escapeString(const char* szSrc, char* szDest, unsigned int size);
 	string& escapeString(const std::string& src, string& dest);
 private:
 	bool InitHandle();
 public:
-	MysqlPool *m_mysql_pool;
+	MysqlPool* m_mysql_pool;
 	HandleState m_state;
 private:
-	MYSQL *m_mysql;
+	MYSQL* m_mysql;
 	std::string m_last_sql;
-	const MysqlUrl *m_url;
+	const MysqlUrl* m_url;
 	unsigned int m_count;
 	Time m_life_time;
 	Time m_use_time;
@@ -127,9 +127,9 @@ public:
 	MysqlPool(int mMaxHandle = 64);
 	~MysqlPool();
 
-	bool PutUrl(const char *szUrl, const unsigned int id = 0);
-	MysqlHandle *GetHandle(uint32 id = 0);
-	void PutHandle(MysqlHandle *handle);
+	bool PutUrl(const char* szUrl, const unsigned int id = 0);
+	MysqlHandle* GetHandle(uint32 id = 0);
+	void PutHandle(MysqlHandle* handle);
 private:
 	EntryManager<MysqlHandle, true> m_mum;
 	EntryManager<MysqlUrl, true> m_murl;
@@ -139,7 +139,7 @@ private:
 class AutoHandle
 {
 public:
-	AutoHandle(MysqlPool *pool, uint32 id = 0) : m_pool(pool)
+	AutoHandle(MysqlPool* pool, uint32 id = 0) : m_pool(pool)
 	{
 		m_handle = m_pool->GetHandle(id);
 	}
@@ -148,20 +148,20 @@ public:
 		m_pool->PutHandle(m_handle);
 	}
 	bool isValid();
-	operator MysqlHandle *()
+	operator MysqlHandle* ()
 	{
 		return m_handle;
 	}
-	MysqlHandle *operator()() const
+	MysqlHandle* operator()() const
 	{
 		return m_handle;
 	}
-	MysqlHandle *GetHandle()
+	MysqlHandle* GetHandle()
 	{
 		return m_handle;
 	}
 
 private:
-	MysqlPool	*m_pool;
-	MysqlHandle *m_handle;
+	MysqlPool*	m_pool;
+	MysqlHandle* m_handle;
 };

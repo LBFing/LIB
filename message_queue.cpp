@@ -10,9 +10,9 @@ MsgQueue::~MsgQueue()
 	Clear();
 }
 
-bool MsgQueue::Put(unsigned int nLen, unsigned char *cmd)
+bool MsgQueue::Put(unsigned int nLen, unsigned char* cmd)
 {
-	unsigned char *cmd_buf = new unsigned char [nLen];
+	unsigned char* cmd_buf = new unsigned char [nLen];
 	if(cmd_buf)
 	{
 		//bcopy(cmd, cmd_buf, nLen);
@@ -35,9 +35,9 @@ bool MsgQueue::Put(unsigned int nLen, unsigned char *cmd)
 		return false;
 	}
 }
-CmdPair *MsgQueue::Get()
+CmdPair* MsgQueue::Get()
 {
-	CmdPair *cmd_pair = NULL;
+	CmdPair* cmd_pair = NULL;
 	if(m_cmd[m_cmd_read].first)
 	{
 		cmd_pair =  &m_cmd[m_cmd_read].second;
