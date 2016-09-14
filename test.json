@@ -1,6 +1,0 @@
-{
-    "hello":"hello world",
-    "number": 10010,
-    "bool": true,
-    "subobj": {"subjsonobj":"a sub json string"}
-}
