@@ -30,4 +30,4 @@ typedef unsigned int uint32;
 typedef unsigned long long uint64;
 typedef unsigned long uLong;
 
-#define	SECOND 10000000
+#define	SECOND 1000000

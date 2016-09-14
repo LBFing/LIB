@@ -368,6 +368,7 @@ int main(int argc, char const* argv[])
 	TestVarType();
 	TestMysqlPool();
 	TestSigal();
-	usleep(SECOND * 10);
+	usleep(SECOND);
+	DEBUG("over!");
 	return 0;
 }
