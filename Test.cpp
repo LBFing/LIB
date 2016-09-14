@@ -10,6 +10,7 @@
 #include "mysql_pool.h"
 #include "var_type.h"
 #include "logger.h"
+#include "signal_catch.h"
 
 using namespace tinyxml2;
 
@@ -48,9 +49,9 @@ void TestSingleTone()
 void TestEntryManager()
 {
 	EntryManager<Item, false> ItemManager;
-	Item *item1 = new Item;
-	Item *item2 = new Item;
-	Item *item3 = new Item;
+	Item* item1 = new Item;
+	Item* item2 = new Item;
+	Item* item3 = new Item;
 	item1->SetId(1);
 	item2->SetId(2);
 	item3->SetId(3);
@@ -65,7 +66,7 @@ void TestEntryManager()
 	struct CallTest : public Callback<Item>
 	{
 		CallTest() {}
-		bool exec(Item *item)
+		bool exec(Item* item)
 		{
 			if(item->GetId() == 1)
 			{
@@ -98,9 +99,9 @@ void TestBuffer()
 	BufferCmdQueue cmd_buffer;
 	cout << cmd_buffer.maxSize() << endl;
 
-	cmd_buffer.put((uint8 *)&cmd1, sizeof(Cmd));
+	cmd_buffer.put((uint8*)&cmd1, sizeof(Cmd));
 	cout << cmd_buffer.rd_size() << "  " << cmd_buffer.wr_size() << endl;
-	cmd_buffer.put((uint8 *)&cmd2, sizeof(Cmd));
+	cmd_buffer.put((uint8*)&cmd2, sizeof(Cmd));
 	cout << cmd_buffer.rd_size() << "  " << cmd_buffer.wr_size() << endl;
 }
 
@@ -152,14 +153,14 @@ void TestXMLParse()
 {
 	XMLDocument doc;
 	doc.LoadFile("test.xml");
-	XMLElement *scene = doc.RootElement();
-	XMLElement *surface = scene->FirstChildElement("node");
+	XMLElement* scene = doc.RootElement();
+	XMLElement* surface = scene->FirstChildElement("node");
 	while(surface)
 	{
-		XMLElement *surfaceChild = surface->FirstChildElement();
-		const char *content;
-		const char *name ;
-		const XMLAttribute *attributeOfSurface = surface->FirstAttribute();
+		XMLElement* surfaceChild = surface->FirstChildElement();
+		const char* content;
+		const char* name ;
+		const XMLAttribute* attributeOfSurface = surface->FirstAttribute();
 		cout << attributeOfSurface->Name() << ":" << attributeOfSurface->Value() << endl;
 		while(surfaceChild)
 		{
@@ -178,7 +179,7 @@ int TestJson()
 	char szFileName[] = "test.json";
 	dc.LoadFile(szFileName);
 	dc.Parse();
-	cJSON *pSub = dc.GetObjectItem("hello");
+	cJSON* pSub = dc.GetObjectItem("hello");
 	printf("obj_1 : %s\n", pSub->valuestring);
 	//parseJson(makeJson());
 	return 1;
@@ -225,14 +226,14 @@ void TestMessage()
 	{
 		cmd.first = i;
 		cmd.second = i + 1;
-		obj.Put(sizeof(cmd), (unsigned char *)(&cmd));
+		obj.Put(sizeof(cmd), (unsigned char*)(&cmd));
 	}
 
 	for(int i = 0 ; i < 20480; i++)
 	{
-		CmdPair *cmd_pair =  obj.Get();
+		CmdPair* cmd_pair =  obj.Get();
 		if(cmd_pair == NULL) { continue; }
-		Cmd *cmd = (Cmd *)cmd_pair->second;
+		Cmd* cmd = (Cmd*)cmd_pair->second;
 		cout << cmd->first << "  " << cmd->second << endl;
 		obj.Erase();
 	}
@@ -245,7 +246,7 @@ void TestMessage()
 
 	cmd.first = 0;
 	cmd.second = 0 + 1;
-	obj.Put(sizeof(cmd), (unsigned char *)(&cmd));
+	obj.Put(sizeof(cmd), (unsigned char*)(&cmd));
 	cout << "==============" << endl;
 
 	cout << obj.m_cmd_write << endl;
@@ -272,7 +273,7 @@ void TestMysqlPool()
 	}
 
 	string strSql = "select * from SERVERLIST";
-	DataSet *ret_set = handle()->ExeSelect(strSql.c_str(), strSql.length());
+	DataSet* ret_set = handle()->ExeSelect(strSql.c_str(), strSql.length());
 
 	if(!ret_set || ret_set->Size() == 0)
 	{
@@ -288,10 +289,10 @@ void TestMysqlPool()
 		int a1 = ret_set->GetValue(i, "ID");
 		int a2 = ret_set->GetValue(i, "TYPE");
 		int a3 = ret_set->GetValue(i, "DYNAMIC");
-		const char *b1 = ret_set->GetValue(i, "NAME");
-		const char *b2 = ret_set->GetValue(i, "IP");
+		const char* b1 = ret_set->GetValue(i, "NAME");
+		const char* b2 = ret_set->GetValue(i, "IP");
 		int a4 = ret_set->GetValue(i, "PORT");
-		const char *b3 = ret_set->GetValue(i, "EXTIP");
+		const char* b3 = ret_set->GetValue(i, "EXTIP");
 		int a5 = ret_set->GetValue(i, "EXTPORT");
 		int a6 = ret_set->GetValue(i, "NETTYPE");
 		printf("%d\t%d\t%d\t%s\t%s\t%d\t%s\t%d\t%d\n", a1, a2, a3, b1, b2, a4, b3, a5, a6);
@@ -306,7 +307,7 @@ void TestVarType()
 	uint32 nField = 5;
 	char szName[10] = {0};
 
-	DataSet *ret_set = new DataSet(nRow, nField);
+	DataSet* ret_set = new DataSet(nRow, nField);
 	if(ret_set == NULL)
 	{
 		printf("error dataset new\n");
@@ -343,7 +344,7 @@ void TestVarType()
 
 	for(uint32 i = 0 ; i < nRow; i++)
 	{
-		const char *value = ret_set->GetValue(i, "Field1");
+		const char* value = ret_set->GetValue(i, "Field1");
 		//cout << "Field1:" << value << endl;
 		DEBUG("Field1:%s", value);
 		//INFO("Field1:%s", value);
@@ -352,8 +353,12 @@ void TestVarType()
 	}
 }
 
+void TestSigal()
+{
+	SetSignedCatched();
+}
 
-int main(int argc, char const *argv[])
+int main(int argc, char const* argv[])
 {
 	InitLogger("test.log", "DEBUG");
 	//TestXMLParse();
@@ -362,7 +367,7 @@ int main(int argc, char const *argv[])
 	//TestRegex();
 	TestVarType();
 	TestMysqlPool();
-
-
+	TestSigal();
+	usleep(SECOND * 10);
 	return 0;
 }
