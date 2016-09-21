@@ -3,3 +3,4 @@ Main
 pb_proto/protobuf/
 log/*
 tags
+*.a
