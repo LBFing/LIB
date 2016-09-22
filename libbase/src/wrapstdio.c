@@ -89,3 +89,61 @@ pid_t Fork(void)
 	return(pid);
 }
 
+//fopen 打开一个文件
+FILE* Fopen(const char* pathname, const char* mode)
+{
+	FILE*	fp;
+
+	if ( (fp = fopen(pathname, mode)) == NULL)
+	{
+		err_sys("fopen error");
+	}
+
+	return(fp);
+}
+
+//fclose 关闭一个文件句柄
+void Fclose(FILE* fp)
+{
+	if (fclose(fp) != 0)
+	{
+		err_sys("fclose error");
+	}
+}
+
+//fputs向指定的文件写入一个字符串 （不自动写入字符串结束标记符‘\0’）
+//成功写入一个字符串后，文件的位置指针会自动后移，函数返回值为非负整数；否则返回EOF -1
+void Fputs(const char* ptr, FILE* stream)
+{
+	if (fputs(ptr, stream) == EOF)
+	{
+		err_sys("fputs error");
+	}
+}
+
+//popen() 函数通过创建一个管道，调用 fork 产生一个子进程，
+//执行一个 shell 以运行命令来开启一个进程
+//这个进程必须由 pclose() 函数关闭
+FILE* Popen(const char* command, const char* mode)
+{
+	FILE*	fp;
+
+	if ( (fp = popen(command, mode)) == NULL)
+	{
+		err_sys("popen error");
+	}
+	return(fp);
+}
+
+//pclose 关闭一个管道
+int Pclose(FILE* fp)
+{
+	int		n;
+
+	if ((n = pclose(fp)) == -1)
+	{
+		err_sys("pclose error");
+	}
+	return(n);
+}
+

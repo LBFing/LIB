@@ -19,6 +19,13 @@
 #define	BUFFSIZE	8192	/* buffer size for reads and writes */
 
 char* Fgets(char*, int, FILE*);
+FILE* Fopen(const char*, const char*);
+void Fclose(FILE*);
+void  Fputs(const char*, FILE*);
+FILE* Popen(const char*, const char*);
+int	Pclose(FILE*);
+
+
 void Write(int, void*, size_t);
 ssize_t Read(int, void*, size_t);
 void Close(int);
