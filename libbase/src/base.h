@@ -18,6 +18,7 @@
 #define	MAXLINE		4096	/* max text line length */
 #define	BUFFSIZE	8192	/* buffer size for reads and writes */
 
+int	Open(const char *, int, ...);
 char* Fgets(char*, int, FILE*);
 FILE* Fopen(const char*, const char*);
 void Fclose(FILE*);
@@ -34,10 +35,15 @@ void Pipe(int*);
 pid_t Waitpid(pid_t, int*, int);
 pid_t Fork(void);
 
+void Unlink(const char*);
+
+
 void err_dump(const char*, ...);
 void err_msg(const char*, ...);
 void err_quit(const char*, ...);
 void err_ret(const char*, ...);
 void err_sys(const char*, ...);
 
+#define	FILE_MODE	(S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)	//定义文件模式
+#define	va_mode_t	mode_t
 #endif

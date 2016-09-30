@@ -146,4 +146,42 @@ int Pclose(FILE* fp)
 	}
 	return(n);
 }
+int Open(const char* pathname, int oflag, ...)
+{
+	int		fd;
+	va_list	ap;
+	mode_t	mode;
+
+	if (oflag & O_CREAT)
+	{
+		va_start(ap, oflag);		/* init ap to final named argument */
+		mode = va_arg(ap, va_mode_t);
+		if ( (fd = open(pathname, oflag, mode)) == -1)
+		{
+			err_sys("open error for %s", pathname);
+		}
+		va_end(ap);
+	}
+	else
+	{
+		if ( (fd = open(pathname, oflag)) == -1)
+		{
+			err_sys("open error for %s", pathname);
+		}
+	}
+	return(fd);
+}
+
+
+//unlink 删除一个文件的目录项并减少它的链接数
+//unlink()会删除参数pathname指定的文件。如果该文件名为最后连接点，但有其他进程打开了此文件
+//则在所有关于此文件的文件描述词皆关闭后才会删除。如果参数pathname为一符号连接，则此连接会被删除。
+void Unlink(const char* pathname)
+{
+	if (unlink(pathname) == -1)
+	{
+		err_sys("unlink error for %s", pathname);
+	}
+}
+
 
