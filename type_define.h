@@ -6,6 +6,7 @@
 #include <set>
 #include <queue>
 #include <vector>
+#include <set>
 #include <string.h>
 #include <pthread.h>
 #include <time.h>
@@ -13,8 +14,14 @@
 #include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <signal.h>
+#include <stdarg.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/mman.h>
+#include <sys/stat.h>        /* For mode constants */
+#include <fcntl.h>           /* For O_* constants */
+#include <errno.h>
 
 using namespace std;
 

@@ -358,8 +358,11 @@ void TestSigal()
 	SetSignedCatched();
 }
 
+__thread uint32 seedp;
+
 int main(int argc, char const* argv[])
 {
+	seedp = (uint32)time(NULL);
 	InitLogger("log/test.log", "DEBUG");
 	//TestXMLParse();
 	//TestJson();

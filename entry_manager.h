@@ -1,14 +1,6 @@
 #pragma once
 #include "type_define.h"
-
-//T 必须为Entry 类型，才能放入Entry管理器中，支持调用
-//Callback 回调累，用于遍历EntryManager中的对象
-template <typename T>
-struct Callback
-{
-	virtual bool exec(T *e) = 0;
-	virtual ~Callback() {};
-};
+#include "entry.h"
 
 //EntryManager 管理器
 //T必须为Entry类型
