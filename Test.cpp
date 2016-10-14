@@ -11,6 +11,7 @@
 #include "var_type.h"
 #include "logger.h"
 #include "signal_catch.h"
+#include "share_memory.h"
 
 using namespace tinyxml2;
 
@@ -347,15 +348,67 @@ void TestVarType()
 		const char* value = ret_set->GetValue(i, "Field1");
 		//cout << "Field1:" << value << endl;
 		DEBUG("Field1:%s", value);
-		//INFO("Field1:%s", value);
-		//WARN("Field1:%s", value);
-		//ERROR("Field1:%s", value);
+		INFO("Field1:%s", value);
+		WARN("Field1:%s", value);
+		ERROR("Field1:%s", value);
 	}
 }
 
 void TestSigal()
 {
 	SetSignedCatched();
+}
+
+struct SharedST
+{
+	SharedST()
+	{
+		memset(this, 0, sizeof(SharedST));
+	}
+	uint32 id;
+	uint32 num;
+	char name[20];
+};
+
+
+void TestShareMemeory()
+{
+	SharedMemoryManager::newInstance();
+	SharedMemoryManager::getInstance().allSharedMemory("shared.data");
+	for (uint32 i = 1 ; i <= 20; i++)
+	{
+		SharedST* pTemp = new SharedST();
+		pTemp->id = i;
+		pTemp->num = 100 * i;
+		sprintf(pTemp->name, "name_%d", i);
+		SharedMemoryManager::getInstance().allocSharedMemory(i, pTemp, sizeof(SharedST));
+	}
+	struct SharedMemCB : public Callback<SharedST>
+	{
+		SharedMemCB() { count = 0 ;}
+		bool exec(SharedST* pShared)
+		{
+			if (pShared == NULL)
+			{
+				return false;
+			}
+
+			DEBUG("Id:%d	Num:%d	Name:%s", pShared->id, pShared->num, pShared->name);
+			count++;
+			return true;
+		}
+		uint32 count;
+	};
+
+	SharedMemCB cb;
+	SharedMemoryManager::getInstance().execEveryEntry(cb);
+	INFO("SharedMemory Count:%d", cb.count);
+
+	bool isExist = false;
+	SharedST* pShared = (SharedST*)SharedMemoryManager::getInstance().setSharedMemory(15, isExist);
+	INFO("Id:%d	Num:%d	Name:%s", pShared->id, pShared->num, pShared->name);
+
+	//SharedMemoryManager::delInstance();
 }
 
 __thread uint32 seedp;
@@ -368,10 +421,17 @@ int main(int argc, char const* argv[])
 	//TestJson();
 	//TestMessage();
 	//TestRegex();
-	TestVarType();
-	TestMysqlPool();
-	TestSigal();
-	usleep(SECOND);
-	DEBUG("over!");
+	//TestVarType();
+	//TestMysqlPool();
+	//TestSigal();
+	//usleep(SECOND);
+	//for(int32 i = 0 ; i < 100; i++ )
+	//{
+	//	int32 abc = randBetween(1, 100);
+	//	DEBUG("rand :%d", abc);
+	//}
+	//DEBUG("over!");
+	//TestShareMemeory();
+	//usleep(SECOND * 100);
 	return 0;
 }

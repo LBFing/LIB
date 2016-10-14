@@ -2,10 +2,6 @@
 #include "string_tool.h"
 #include "logger.h"
 
-#define PAGE_SIZE			256		//定义页面大小
-#define SHARE_TRUNK_SIZE	24800	//定义每个共享对象大小占用的字节
-//共享内存设置模式前面为ID 后面Wie数据
-//前面设置为数据ID1ID2 。。。。Data1Data2 。。。。。
 
 SharedMemoryManager::SharedMemoryManager()
 {
@@ -17,6 +13,10 @@ SharedMemoryManager::SharedMemoryManager()
 	m_share_size = (SHARE_TRUNK_SIZE + sizeof(uint32)) * m_max_share_num;
 }
 
+SharedMemoryManager::~SharedMemoryManager()
+{
+	final();
+}
 
 void* SharedMemoryManager::allSharedMemory(const char* filename)
 {
@@ -58,7 +58,64 @@ void* SharedMemoryManager::allSharedMemory(const char* filename)
 		shm_unlink(m_filename.c_str());
 		return NULL;
 	}
+
+
+	for(uint32 i = 0; i < m_max_share_num; i++)
+	{
+		uint32 charid = *(uint32*)((char*)m_pShared_mem + i * sizeof(uint32));
+		if(charid)
+		{
+			m_share_num++;
+		}
+	}
 	return m_pShared_mem;
+}
+
+bool SharedMemoryManager::allocSharedMemory(const uint32 id, const void* p, const uint32 size)
+{
+	for(uint32 i = 0; i < m_share_num; i++)
+	{
+		uint32 charid = *(uint32*)((char*)m_pShared_mem + i * sizeof(uint32));
+		if (charid == 0) //没有共享数据
+		{
+			//设置新的共享数据
+			*(uint32*)((char*)m_pShared_mem + i * sizeof(uint32)) = id;
+			void* pShared = (char*)m_pShared_mem + m_max_share_num * sizeof (uint32) + i * SHARE_TRUNK_SIZE ;
+			if(pShared == NULL)
+			{
+				DEBUG("SharedMemory is NULL");
+				return false;
+			}
+			else
+			{
+				//内存拷贝
+				memcpy(pShared, p, size);
+			}
+			return true;
+		}
+	}
+
+	if(m_share_num >= m_max_share_num)
+	{
+		ERROR("共享内存空间已满 分配失败 CurSize:%u", m_share_num);
+		return false;
+	}
+
+	*(uint32*)((char*)m_pShared_mem + m_share_num * sizeof(uint32)) = id;
+	//设置新的共享数据
+	void* pShared = (char*)m_pShared_mem + m_max_share_num * sizeof (uint32) + m_share_num * SHARE_TRUNK_SIZE ;
+	if(pShared == NULL)
+	{
+		DEBUG("SharedMemory is NULL");
+		return false;
+	}
+	else
+	{
+		//内存拷贝
+		memcpy(pShared, p, size);
+		m_share_num++;
+	}
+	return true;
 }
 
 void SharedMemoryManager::freeSharedMemory()
@@ -68,6 +125,7 @@ void SharedMemoryManager::freeSharedMemory()
 		munmap(m_pShared_mem, m_share_size);
 		shm_unlink(m_filename.c_str());
 		m_pShared_mem = NULL;
+		m_share_num = 0;
 	}
 }
 void* SharedMemoryManager::setSharedMemory(const uint32 id, bool& exist)
@@ -77,7 +135,7 @@ void* SharedMemoryManager::setSharedMemory(const uint32 id, bool& exist)
 		uint32 charid = *(uint32*)((char*)m_pShared_mem + i * sizeof(uint32));
 		if (charid == id) //找到共享数据
 		{
-			DEBUG("已存在于内存中 Id：%u", id);
+			DEBUG("已存在于内存中 Id:%u", id);
 			exist = true;
 			void* pShared = (char*)m_pShared_mem + m_max_share_num * sizeof (uint32) + i * SHARE_TRUNK_SIZE ;
 			return pShared;
@@ -152,7 +210,7 @@ bool SharedMemoryManager::wreteBackDB(ClearSharedMemoryCallBack cb)
 		if(charid)
 		{
 			void* pShared = (char*)m_pShared_mem + m_max_share_num * sizeof (uint32) + i * SHARE_TRUNK_SIZE ;
-			cb(i,pShared);
+			cb(i, pShared);
 			*(uint32*)((char*)m_pShared_mem + i * sizeof(uint32)) = 0;
 		}
 	}
@@ -164,20 +222,3 @@ void SharedMemoryManager::final()
 	freeSharedMemory();
 }
 
-bool SharedMemoryManager::execEveryEntry(Callback<void>& cb)
-{
-	for(uint32 i = 0; i < m_share_num; i++)
-	{
-		uint32 charid = *(uint32*)((char*)m_pShared_mem + i * sizeof(uint32));
-		if(charid)
-		{
-			void* pShared = (char*)m_pShared_mem + m_max_share_num * sizeof (uint32) + i * SHARE_TRUNK_SIZE ;
-			if(!cb.exec(pShared))
-			{
-				return false;
-			}
-		}
-	}
-
-	return true;
-}
