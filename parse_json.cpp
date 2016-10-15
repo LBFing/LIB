@@ -45,7 +45,7 @@ bool JSonParse::LoadFile(const char* szFileName)
 	size_t result = fread(m_filebuf, lSize, 1, pFile);
 	if(result == 0)
 	{
-		printf("result :%ld size:%ld", result, lSize);
+		printf("result :%lu size:%lu", result, lSize);
 		fputs("Reading error", stderr);
 		return false;
 	}
