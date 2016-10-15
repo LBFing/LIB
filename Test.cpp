@@ -408,7 +408,7 @@ void TestShareMemeory()
 	SharedST* pShared = (SharedST*)SharedMemoryManager::getInstance().setSharedMemory(15, isExist);
 	INFO("Id:%d	Num:%d	Name:%s", pShared->id, pShared->num, pShared->name);
 
-	//SharedMemoryManager::delInstance();
+	SharedMemoryManager::delInstance();
 }
 
 __thread uint32 seedp;
@@ -431,7 +431,7 @@ int main(int argc, char const* argv[])
 	//	DEBUG("rand :%d", abc);
 	//}
 	//DEBUG("over!");
-	//TestShareMemeory();
+	TestShareMemeory();
 	//usleep(SECOND * 100);
 	return 0;
 }
