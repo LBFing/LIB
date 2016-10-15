@@ -430,7 +430,7 @@ int main(int argc, char const* argv[])
 	//	int32 abc = randBetween(1, 100);
 	//	DEBUG("rand :%d", abc);
 	//}
-	//DEBUG("over!");
+	DEBUG("over!");
 	TestShareMemeory();
 	//usleep(SECOND * 100);
 	return 0;
