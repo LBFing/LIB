@@ -30,3 +30,4 @@ $(PROGRAM):$(OBJS)
 .PHONY:clean
 clean:
 	$(RM) $(OBJS) $(PROGRAM)
+	$(RM) *.o
