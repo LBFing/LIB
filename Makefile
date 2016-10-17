@@ -9,8 +9,16 @@ INC 	=
 LIBS_MYSQL= ${shell mysql_config --libs_r}
 CPPFLAGS_MYSQL=${shell mysql_config --cflags}
 
+LIBS_REDIS= ${shell pkg-config --libs hiredis}
+CPPFLAGS_REDIS=${shell pkg-config --cflags hiredis}
+
+#mysql库
 LIBS += $(LIBS_MYSQL)
 INC += $(CPPFLAGS_MYSQL)
+
+#redis库
+LIBS += $(LIBS_REDIS)
+INC += $(CPPFLAGS_REDIS)
 
 defalut:	$(OBJS) $(PROGRAM)
 
