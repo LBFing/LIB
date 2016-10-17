@@ -12,6 +12,7 @@
 #include "logger.h"
 #include "signal_catch.h"
 #include "share_memory.h"
+#include "redis_command.h"
 
 using namespace tinyxml2;
 
@@ -411,6 +412,20 @@ void TestShareMemeory()
 	SharedMemoryManager::delInstance();
 }
 
+void TestRedisCommand()
+{
+	Redis* r = new Redis();
+	if(!r->connect("192.168.81.128", 6379))
+	{
+		ERROR("redis connect error!");
+		return;
+	}
+	INFO("redis connect success!");
+	r->set("name", "Mayuyu");
+	DEBUG("Redis name:%s", r->get("name").c_str());
+	delete r;
+}
+
 __thread uint32 seedp;
 
 int main(int argc, char const* argv[])
@@ -430,8 +445,9 @@ int main(int argc, char const* argv[])
 	//	int32 abc = randBetween(1, 100);
 	//	DEBUG("rand :%d", abc);
 	//}
-	DEBUG("over!");
-	TestShareMemeory();
+	//DEBUG("over!");
+	//TestShareMemeory();
 	//usleep(SECOND * 100);
+	TestRedisCommand();
 	return 0;
 }
