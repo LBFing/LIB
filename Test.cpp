@@ -415,7 +415,7 @@ void TestShareMemeory()
 void TestRedisCommand()
 {
 	Redis* r = new Redis();
-	if(!r->connect("192.168.81.128", 6379))
+	if(!r->connect("127.0.0.1", 6379))
 	{
 		ERROR("redis connect error!");
 		return;
@@ -431,7 +431,7 @@ __thread uint32 seedp;
 int main(int argc, char const* argv[])
 {
 	seedp = (uint32)time(NULL);
-	InitLogger("log/test.log", "DEBUG");
+	InitLogger("/root/study/LIB/log/test.log", "DEBUG");
 	//TestXMLParse();
 	//TestJson();
 	//TestMessage();
