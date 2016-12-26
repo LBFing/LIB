@@ -448,6 +448,6 @@ int main(int argc, char const* argv[])
 	//DEBUG("over!");
 	//TestShareMemeory();
 	//usleep(SECOND * 100);
-	TestRedisCommand();
+	//TestRedisCommand();
 	return 0;
 }
