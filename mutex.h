@@ -25,16 +25,32 @@ public:
 		return (pthread_mutex_trylock(&m_mutex) == 0);
 	}
 private:
-	pthread_mutex_t m_mutex; 
+	pthread_mutex_t m_mutex;
 };
 
+
+class MutexLockGuard : private Noncopyable
+{
+public:
+	explicit MutexLockGuard(Mutex& mutex) : m_mutex(mutex)
+	{
+		m_mutex.Lock();
+	}
+
+	MutexLockGuard::~MutexLockGuard
+	{
+		m_mutex.UnLock();
+	}
+private:
+	Mutex& m_mutex;
+}
 
 class RWLock : private Noncopyable
 {
 public:
 	RWLock()
 	{
-		pthread_rwlock_init(&m_rwlock,NULL);
+		pthread_rwlock_init(&m_rwlock, NULL);
 	}
 	~RWLock()
 	{
@@ -53,7 +69,7 @@ public:
 	{
 		pthread_rwlock_unlock(&m_rwlock);
 	}
-	
+
 private:
 	pthread_rwlock_t m_rwlock;
 };
