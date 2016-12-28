@@ -37,13 +37,13 @@ public:
 		m_mutex.Lock();
 	}
 
-	MutexLockGuard::~MutexLockGuard
+	~MutexLockGuard()
 	{
 		m_mutex.UnLock();
 	}
 private:
 	Mutex& m_mutex;
-}
+};
 
 class RWLock : private Noncopyable
 {
