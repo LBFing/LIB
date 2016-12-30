@@ -24,6 +24,12 @@ public:
 	{
 		return (pthread_mutex_trylock(&m_mutex) == 0);
 	}
+
+	pthread_mutex_t* GetPthreadMutex()
+	{
+		return &m_mutex;
+	}
+
 private:
 	pthread_mutex_t m_mutex;
 };
