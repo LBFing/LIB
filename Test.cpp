@@ -379,10 +379,14 @@ void TestShareMemeory()
 	for (uint32 i = 1 ; i <= 20; i++)
 	{
 		SharedST* pTemp = new SharedST();
-		pTemp->id = i;
-		pTemp->num = 100 * i;
-		sprintf(pTemp->name, "name_%d", i);
-		SharedMemoryManager::getInstance().allocSharedMemory(i, pTemp, sizeof(SharedST));
+		if(pTemp)
+		{
+			pTemp->id = i;
+			pTemp->num = 100 * i;
+			sprintf(pTemp->name, "name_%d", i);
+			SharedMemoryManager::getInstance().allocSharedMemory(i, pTemp, sizeof(SharedST));
+			delete pTemp;
+		}
 	}
 	struct SharedMemCB : public Callback<SharedST>
 	{
