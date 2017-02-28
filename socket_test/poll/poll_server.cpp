@@ -94,7 +94,7 @@ int main()
 		if (vecPolls[0].revents & POLLIN)
 		{
 			peerlen = sizeof (peeraddr);
-			connfd = accept4(listenfd, (struct sockaddr*)&peerlen, &peerlen, SOCK_NONBLOCK | SOCK_CLOEXEC);
+			connfd = accept4(listenfd, (struct sockaddr*)&peeraddr, &peerlen, SOCK_NONBLOCK | SOCK_CLOEXEC);
 			if (connfd == -1)
 			{
 				ERR_EXIT("accept4 error");
@@ -104,6 +104,8 @@ int main()
 			pfd.events = POLLIN;
 			pfd.revents = 0;
 			vecPolls.push_back(pfd);
+			--nReady;
+
 			std::cout << "ip=" << inet_ntoa(peeraddr.sin_addr) <<
 			          " port=" << ntohs(peeraddr.sin_port) << std::endl;
 			if (nReady == 0)
@@ -121,6 +123,7 @@ int main()
 				connfd = it->fd;
 				char buf[1024] = {0};
 				int ret = read(connfd, buf, 1024);
+				cout << ret << endl;
 				if (ret == -1)
 				{
 					ERR_EXIT("read");
@@ -134,11 +137,11 @@ int main()
 					close(connfd);
 					continue;
 				}
-				
+
 				cout << buf << endl;
 				write(connfd, buf, strlen(buf));
 			}
 		}
-		return 0;
 	}
+	return 0;
 }
