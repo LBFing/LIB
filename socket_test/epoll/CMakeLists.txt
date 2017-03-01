@@ -7,5 +7,5 @@ set(CMAKE_CXX_COMPILER "g++")
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
-add_executable(poll_svr epoll_server.cpp)
+add_executable(epoll_svr epoll_server.cpp)
 add_executable(client client.cpp)

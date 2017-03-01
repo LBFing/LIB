@@ -94,7 +94,7 @@ int main()
 		{
 			continue;
 		}
-		if(nReady == events.size())
+		if(nReady >= events.size())
 		{
 			events.resize(events.size() * 2);
 		}
@@ -103,7 +103,6 @@ int main()
 		{
 			if(events[i].data.fd == listenfd)
 			{
-
 				peerlen = sizeof (peeraddr);
 				connfd = accept4(listenfd, (struct sockaddr*)&peeraddr, &peerlen, SOCK_NONBLOCK | SOCK_CLOEXEC);
 				if (connfd == -1)
@@ -122,44 +121,39 @@ int main()
 					}
 				}
 
-
 				std::cout << "ip=" << inet_ntoa(peeraddr.sin_addr) <<
 				          " port=" << ntohs(peeraddr.sin_port) << std::endl;
 				clients.push_back(connfd);
 				event.data.fd = connfd;
 				event.events = EPOLLIN;
-				epoll_ctl(epollfd,EPOLLIN_CTL_ADD,connfd,&event);
+				epoll_ctl(epollfd, EPOLL_CTL_ADD, connfd, &event);
 			}
-			//============================
-
-			for (vecPollFd::iterator it = vecPolls.begin() + 1;
-			        it != vecPolls.end() && nReady > 0 ; ++it)
+			else if(events[i].events & EPOLLIN)
 			{
-				if (it->revents & POLLIN)
+				connfd = events[i].data.fd;
+				if (connfd < 0)
 				{
-					--nReady;
-					connfd = it->fd;
-					char buf[1024] = {0};
-					int ret = read(connfd, buf, 1024);
-					cout << ret << endl;
-					if (ret == -1)
-					{
-						ERR_EXIT("read");
-					}
-					if (ret == 0)
-					{
-						std::cout << "client close" << std::endl;
-						it = vecPolls.erase(it);
-						--it;
-
-						close(connfd);
-						continue;
-					}
-
-					cout << buf << endl;
-					write(connfd, buf, strlen(buf));
+					continue;
 				}
+				char buf[1024] = {0};
+				int ret = read(connfd, buf, 1024);
+				if (ret == -1)
+				{
+					ERR_EXIT("read error");
+				}
+				if (ret == 0)
+				{
+					cout << "client close" << endl;
+					close(connfd);
+					event = events[i];
+					epoll_ctl(epollfd, EPOLL_CTL_DEL, connfd, &event);
+					clients.erase(std::remove(clients.begin(), clients.end(), connfd), clients.end());
+					continue;
+				}
+				std::cout << ret << ":" << buf << endl;
+				write(connfd, buf, strlen(buf));
 			}
 		}
-		return 0;
 	}
+	return 0;
+}
