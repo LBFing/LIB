@@ -20,6 +20,7 @@ using namespace std;
 		exit(EXIT_FAILURE); \
 	}while(0)
 
+
 int main()
 {
 	int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
