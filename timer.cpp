@@ -44,7 +44,7 @@ uint64 Time::Elapse(const Time& rt) const
 	}
 }
 
-void Time::Format(char *buffer, size_t bufferlen, const char *format)
+void Time::Format(char* buffer, size_t bufferlen, const char* format)
 {
 	struct tm tm_data;
 	time_t sec = (time_t) Sec();
