@@ -1,3 +1,5 @@
+#ifndef __MUTXT_H__
+#define __MUTXT_H__
 #include "nocopyable.h"
 #include "type_define.h"
 
@@ -79,3 +81,4 @@ public:
 private:
 	pthread_rwlock_t m_rwlock;
 };
+#endif

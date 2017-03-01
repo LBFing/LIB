@@ -20,7 +20,7 @@ SharedMemoryManager::~SharedMemoryManager()
 
 void* SharedMemoryManager::allSharedMemory(const char* filename)
 {
-	StringTool::format(m_filename, "%s.%lu", filename, ::getuid());
+	StringTool::Format(m_filename, "%s.%lu", filename, ::getuid());
 	//创建或打开一个共享内存,成功返回一个整数的文件描述符，错误返回-1
 	m_fd = ::shm_open(m_filename.c_str(), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
 	if(m_fd == -1)

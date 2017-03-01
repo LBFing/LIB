@@ -1,26 +1,26 @@
 #include "string_tool.h"
 
-string& StringTool::format(string& resultOut, const char* fmt, ...)
+string& StringTool::Format(string& resultOut, const char* fmt, ...)
 {
 	va_list vl;
 	va_start(vl, fmt);
-	vformat(resultOut, fmt, vl);
+	VFormat(resultOut, fmt, vl);
 	va_end(vl);
 	return resultOut;
 }
-string  StringTool::format(const char* fmt, ...)
+string  StringTool::Format(const char* fmt, ...)
 {
 
 	va_list vl;
 	va_start(vl, fmt);
 	string resultOut;
-	vformat(resultOut, fmt, vl);
+	VFormat(resultOut, fmt, vl);
 	va_end(vl);
 	return resultOut;
 }
 
 
-string  StringTool::vformat(string& resultOut, const char* fmt, va_list argptr, int32 default_size /*= DEFAULT_BUFFER_SIZE*/)
+string  StringTool::VFormat(string& resultOut, const char* fmt, va_list argptr, int32 default_size /*= DEFAULT_BUFFER_SIZE*/)
 {
 	vector<char> buffer(default_size,0);
 	while(true)

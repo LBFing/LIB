@@ -13,6 +13,8 @@
 #include "signal_catch.h"
 #include "share_memory.h"
 #include "redis_command.h"
+#include "string_tool.h"
+#include "blocking_queue.h"
 
 using namespace tinyxml2;
 
@@ -430,6 +432,24 @@ void TestRedisCommand()
 	delete r;
 }
 
+void TestBlockQueue()
+{
+	BlockingQueue<std::string> queue;
+	for(int32 i = 0; i < 1000 ; i++)
+	{
+		string strTmp = StringTool::Format("%d",i);
+		queue.put(strTmp);
+	}
+
+	INFO("queue size:%lu",queue.size());
+	for (int32 i = 0 ; i < 10; i++)
+	{
+		string strTmp = queue.take();
+		DEBUG("queue: %s",strTmp.c_str());
+	}
+	INFO("queue size:%lu",queue.size());
+}
+
 __thread uint32 seedp;
 
 int main(int argc, char const* argv[])
@@ -453,5 +473,7 @@ int main(int argc, char const* argv[])
 	//TestShareMemeory();
 	//usleep(SECOND * 100);
 	//TestRedisCommand();
+	
+	TestBlockQueue();
 	return 0;
 }

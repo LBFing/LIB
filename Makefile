@@ -1,5 +1,5 @@
 CC		=	g++
-FLAGS	= 	-Wall -g
+FLAGS	= 	-Wall -Werror -g
 SRCFILE	=	$(wildcard *.cpp)
 OBJS	=	$(patsubst %.cpp, %.o, $(SRCFILE))
 PROGRAM =	Main
