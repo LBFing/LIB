@@ -15,6 +15,7 @@
 #include "redis_command.h"
 #include "string_tool.h"
 #include "blocking_queue.h"
+#include "buffer_ex.h"
 
 using namespace tinyxml2;
 
@@ -450,6 +451,11 @@ void TestBlockQueue()
 	INFO("queue size:%lu",queue.size());
 }
 
+void TestBufferEx()
+{
+	BufferEx obj;
+}
+
 __thread uint32 seedp;
 
 int main(int argc, char const* argv[])
@@ -473,7 +479,7 @@ int main(int argc, char const* argv[])
 	//TestShareMemeory();
 	//usleep(SECOND * 100);
 	//TestRedisCommand();
-	
+
 	TestBlockQueue();
 	return 0;
 }
