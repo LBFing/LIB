@@ -14,9 +14,9 @@ void MysqlRow::SetField(uint32 nField)
 {
 	m_value.resize(nField);
 }
-void MysqlRow::SetValue(uint32 nField, const char *value, uint32 nLen)
+void MysqlRow::SetValue(uint32 nField, const char* value, uint32 nLen)
 {
-	if(nField < m_value.size())
+	if (nField < m_value.size())
 	{
 		m_value[nField].put(value, nLen);
 	}
@@ -24,7 +24,7 @@ void MysqlRow::SetValue(uint32 nField, const char *value, uint32 nLen)
 
 VarType& MysqlRow::GetValue(uint32 nField)
 {
-	if(nField < m_value.size())
+	if (nField < m_value.size())
 	{
 		return m_value[nField];
 	}
@@ -37,13 +37,13 @@ VarType& MysqlRow::GetValue(uint32 nField)
 //==========================================================
 DataSet::DataSet(uint32 nRow, uint32 nField)
 {
-	for(uint32 i = 0 ; i < nRow; i++)
+	for (uint32 i = 0 ; i < nRow; i++)
 	{
-		MysqlRow *row = new MysqlRow(nField);
-		if(row)
+		MysqlRow* row = new MysqlRow(nField);
+		if (row)
 		{
 			row->SetId(i);
-			if(m_record.AddEntry(row) == false)
+			if (m_record.AddEntry(row) == false)
 			{
 				delete row;
 				row = NULL;
@@ -57,15 +57,15 @@ DataSet::~DataSet()
 	m_field_map.clear();
 }
 
-bool DataSet::PutField(uint32 nField, const char *szName)
+bool DataSet::PutField(uint32 nField, const char* szName)
 {
 	return m_field_map.insert(make_pair(szName, nField)).second;
 }
 
-void DataSet::PutValue(uint32 nRow, uint32 nField, const char *value , uint32 nLen)
+void DataSet::PutValue(uint32 nRow, uint32 nField, const char* value , uint32 nLen)
 {
-	MysqlRow *row = m_record.GetEntryById(nRow);
-	if(row)
+	MysqlRow* row = m_record.GetEntryById(nRow);
+	if (row)
 	{
 		row->SetValue(nField, value, nLen);
 	}
@@ -74,13 +74,13 @@ void DataSet::PutValue(uint32 nRow, uint32 nField, const char *value , uint32 nL
 VarType& DataSet::GetValue(uint32 nRow, string strName)
 {
 	map<string, uint32>::iterator iter = m_field_map.find(strName);
-	if(iter == m_field_map.end())
+	if (iter == m_field_map.end())
 	{
 		return VAR_NULL;
 	}
 
-	MysqlRow *row =  m_record.GetEntryById(nRow);
-	if(row)
+	MysqlRow* row =  m_record.GetEntryById(nRow);
+	if (row)
 	{
 		return row->GetValue(iter->second);
 	}
@@ -98,7 +98,7 @@ uint32 DataSet::Size()
 
 //============================================
 
-MysqlHandle::MysqlHandle(const MysqlUrl *url, MysqlPool *pool, uint32 id)
+MysqlHandle::MysqlHandle(const MysqlUrl* url, MysqlPool* pool, uint32 id)
 {
 	SetId(id);
 	m_url = url;
@@ -118,7 +118,7 @@ MysqlHandle::~MysqlHandle()
 bool MysqlHandle::InitMysql()
 {
 	FinalHandle();
-	if(InitHandle() == false)
+	if (InitHandle() == false)
 	{
 		FinalHandle();
 		return false;
@@ -131,9 +131,9 @@ bool MysqlHandle::InitMysql()
 
 void MysqlHandle::FinalHandle()
 {
-	if(m_mysql)
+	if (m_mysql)
 	{
-		DEBUG("InitHandle():The mysql connect will been closed...");
+		printf("InitHandle():The mysql connect will been closed...\n");
 		mysql_close(m_mysql);
 		m_mysql = NULL;
 	}
@@ -144,14 +144,14 @@ void MysqlHandle::FinalHandle()
 
 bool MysqlHandle::SetHandle()
 {
-	if(m_state == HandleState_Used)
+	if (m_state == HandleState_Used)
 	{
 		return false;
 	}
 	m_use_time.Now();
-	if(m_count > 10000 || mysql_ping(m_mysql) != 0)
+	if (m_count > 10000 || mysql_ping(m_mysql) != 0)
 	{
-		if(InitMysql() == false)
+		if (InitMysql() == false)
 		{
 			return false;
 		}
@@ -169,66 +169,66 @@ void MysqlHandle::FreeHandle()
 
 void MysqlHandle::CheckUseTime()
 {
-	if(m_use_time.Elapse(Time()) > m_timet_out)
+	if (m_use_time.Elapse(Time()) > m_timet_out)
 	{
-		WARN("sql语句超时:%ums,描述:%s", m_timet_out, m_last_sql.c_str());
+		printf("sql语句超时:%ums,描述:%s\n", m_timet_out, m_last_sql.c_str());
 		m_timet_out += 10000L;
 	}
 }
 
-int MysqlHandle::ExecSql(const char *szSql, uint32 nLen, bool need_errlog)
+int MysqlHandle::ExecSql(const char* szSql, uint32 nLen, bool need_errlog)
 {
-	if(szSql == NULL || nLen == 0 || m_mysql == NULL)
+	if (szSql == NULL || nLen == 0 || m_mysql == NULL)
 	{
 		return -1;
 	}
 	m_last_sql = szSql;
 	int nRet = mysql_real_query(m_mysql, szSql, nLen);
-	if(nRet && need_errlog)
+	if (nRet && need_errlog)
 	{
 		printf("SQL:%s  Error:%s\n", szSql, mysql_error(m_mysql));
 	}
 	return nRet;
 }
 
-DataSet *MysqlHandle::ExeSelect(const char *szSql, unsigned int nLen)
+DataSet* MysqlHandle::ExeSelect(const char* szSql, unsigned int nLen)
 {
-	if(m_mysql == NULL)
+	if (m_mysql == NULL)
 	{
 		printf("NULL m_mysql Error. ---- %s\n", szSql);
 		return NULL;
 	}
 	m_select_time.Now();
-	if(ExecSql(szSql, nLen))
+	if (ExecSql(szSql, nLen))
 	{
 		printf("ExeSelect Error. ---- %s\n", szSql);
 		return NULL;
 	}
 
-	MYSQL_RES *result = mysql_store_result(m_mysql);
-	if(result == NULL)
+	MYSQL_RES* result = mysql_store_result(m_mysql);
+	if (result == NULL)
 	{
 		printf("Result Get Error:%s\n", mysql_error(m_mysql));
 		return NULL;
 	}
 	uint32 nRow =  mysql_num_rows(result);
-	if(nRow == 0)
+	if (nRow == 0)
 	{
 		mysql_free_result(result);
 		return NULL;
 	}
 	uint32 nField = mysql_num_fields(result);
-	if(nField == 0)
+	if (nField == 0)
 	{
 		mysql_free_result(result);
 		return NULL;
 	}
 
-	DataSet *ret_set = new DataSet(nRow, nField);
-	MYSQL_FIELD *mysql_fields = mysql_fetch_fields(result);
-	for(uint32 i = 0 ; i < nField; i++)
+	DataSet* ret_set = new DataSet(nRow, nField);
+	MYSQL_FIELD* mysql_fields = mysql_fetch_fields(result);
+	for (uint32 i = 0 ; i < nField; i++)
 	{
-		if(ret_set->PutField(i, mysql_fields[i].name) == false)
+		if (ret_set->PutField(i, mysql_fields[i].name) == false)
 		{
 			printf("error PutField\n");
 			mysql_free_result(result);
@@ -240,10 +240,10 @@ DataSet *MysqlHandle::ExeSelect(const char *szSql, unsigned int nLen)
 
 	MYSQL_ROW row;
 	uint32 i = 0;
-	while((row = mysql_fetch_row(result)))
+	while ((row = mysql_fetch_row(result)))
 	{
-		unsigned long *lengths = mysql_fetch_lengths(result);
-		for(uint32 j = 0 ; j < nField; j++)
+		unsigned long* lengths = mysql_fetch_lengths(result);
+		for (uint32 j = 0 ; j < nField; j++)
 		{
 			//cout << "ROW[j]" << row[j] << endl;
 			ret_set->PutValue(i, j, row[j], lengths[j]);
@@ -253,17 +253,17 @@ DataSet *MysqlHandle::ExeSelect(const char *szSql, unsigned int nLen)
 	return ret_set;
 }
 
-char *MysqlHandle::escapeString(const char *szSrc, char *szDest, unsigned int size)
+char* MysqlHandle::escapeString(const char* szSrc, char* szDest, unsigned int size)
 {
-	if(szSrc == NULL || szDest == NULL || m_mysql == NULL) { return NULL; }
-	char *end = szDest;
+	if (szSrc == NULL || szDest == NULL || m_mysql == NULL) { return NULL; }
+	char* end = szDest;
 	mysql_real_escape_string(m_mysql, end, szSrc, size == 0 ? strlen(szSrc) : size);
 	return szDest;
 }
 
 string& MysqlHandle::escapeString(const std::string& src, string& dest)
 {
-	if(m_mysql == NULL) { return dest; }
+	if (m_mysql == NULL) { return dest; }
 	char buff[2 * src.length() + 1];
 	bzero(buff, sizeof(buff));
 	mysql_real_escape_string(m_mysql, buff, src.c_str(), src.length());
@@ -273,7 +273,7 @@ string& MysqlHandle::escapeString(const std::string& src, string& dest)
 
 bool MysqlHandle::InitHandle()
 {
-	if(m_mysql)
+	if (m_mysql)
 	{
 		printf("InitHandle():The mysql connect will been closed...\n");
 		mysql_close(m_mysql);
@@ -281,13 +281,13 @@ bool MysqlHandle::InitHandle()
 	}
 
 	m_mysql = mysql_init(NULL);
-	if(m_mysql == NULL)
+	if (m_mysql == NULL)
 	{
 		printf("InitHandle():Initiate mysql MERROR...\n");
 		return false;
 	}
 
-	if(mysql_real_connect(m_mysql, m_url->m_host.c_str(), m_url->m_user.c_str(), m_url->m_passwd.c_str(), m_url->m_dbname.c_str(), m_url->m_port, NULL, CLIENT_COMPRESS | CLIENT_INTERACTIVE) == NULL)
+	if (mysql_real_connect(m_mysql, m_url->m_host.c_str(), m_url->m_user.c_str(), m_url->m_passwd.c_str(), m_url->m_dbname.c_str(), m_url->m_port, NULL, CLIENT_COMPRESS | CLIENT_INTERACTIVE) == NULL)
 	{
 		printf("InitHandle():connect mysql://%s:%u/%s failed...\n", m_url->m_host.c_str(), m_url->m_port, m_url->m_dbname.c_str());
 		return false;
@@ -304,9 +304,9 @@ MysqlPool::MysqlPool(int mMaxHandle)
 {
 	m_max_handle = mMaxHandle;
 	printf("Version of the mysql libs is %s\n" , mysql_get_client_info());
-	if(!mysql_thread_safe())
+	if (!mysql_thread_safe())
 	{
-		WARN("The mysql libs is not thread safe...");
+		printf("The mysql libs is not thread safe...\n");
 	}
 }
 
@@ -317,30 +317,30 @@ MysqlPool::~MysqlPool()
 }
 
 
-bool MysqlPool::PutUrl(const char *szUrl, const unsigned int id)
+bool MysqlPool::PutUrl(const char* szUrl, const unsigned int id)
 {
-	MysqlUrl *mysql_url = new MysqlUrl(szUrl);
-	if(mysql_url == NULL)
+	MysqlUrl* mysql_url = new MysqlUrl(szUrl);
+	if (mysql_url == NULL)
 	{
 		return false;
 	}
 	mysql_url->SetId(id);
 	m_murl.AddEntry(mysql_url);
 
-	MysqlHandle *handle = new MysqlHandle(mysql_url, this, id);
-	if(handle == NULL)
+	MysqlHandle* handle = new MysqlHandle(mysql_url, this, id);
+	if (handle == NULL)
 	{
 		m_murl.RemoveEntry(mysql_url);
 		return false;
 	}
 
-	if(handle->InitMysql() == false)
+	if (handle->InitMysql() == false)
 	{
 		m_murl.RemoveEntry(mysql_url);
 		return false;
 	}
 
-	if(m_mum.AddEntry(handle) == false)
+	if (m_mum.AddEntry(handle) == false)
 	{
 		m_murl.RemoveEntry(mysql_url);
 		handle->FinalHandle();
@@ -352,32 +352,32 @@ bool MysqlPool::PutUrl(const char *szUrl, const unsigned int id)
 }
 
 
-MysqlHandle *MysqlPool::GetHandle(uint32 id)
+MysqlHandle* MysqlPool::GetHandle(uint32 id)
 {
 
 	struct GetHandleExec : public Callback<MysqlHandle>
 	{
-		MysqlHandle *_handle;
+		MysqlHandle* _handle;
 		GetHandleExec(): _handle(NULL) {}
-		bool exec(MysqlHandle *entry)
+		bool exec(MysqlHandle* entry)
 		{
-			switch(entry->m_state)
+			switch (entry->m_state)
 			{
 				case HandleState_Valid:
 				case HandleState_Invalid:
+				{
+					if (entry->SetHandle())
 					{
-						if(entry->SetHandle())
-						{
-							_handle = entry;
-							return false;
-						}
+						_handle = entry;
+						return false;
 					}
-					break;
+				}
+				break;
 				case HandleState_Used:
-					{
-						entry->CheckUseTime();
-					}
-					break;
+				{
+					entry->CheckUseTime();
+				}
+				break;
 				default:
 					break;
 			}
@@ -385,35 +385,35 @@ MysqlHandle *MysqlPool::GetHandle(uint32 id)
 		}
 	};
 	GetHandleExec Exec;
-	while(true)
+	while (true)
 	{
 		m_mum.execEveryEntry<>(Exec);
-		if(Exec._handle)
+		if (Exec._handle)
 		{
 			return Exec._handle;
 		}
-		if(m_mum.Size() < m_max_handle)
+		if (m_mum.Size() < m_max_handle)
 		{
-			MysqlUrl *url = m_murl.GetEntryById(id);
-			if(url == NULL)
+			MysqlUrl* url = m_murl.GetEntryById(id);
+			if (url == NULL)
 			{
 				return NULL;
 			}
 
-			MysqlHandle *handle = new MysqlHandle(url, this, id);
-			if(handle == NULL)
+			MysqlHandle* handle = new MysqlHandle(url, this, id);
+			if (handle == NULL)
 			{
 				return NULL;
 			}
 
-			if(handle->InitMysql() == false)
+			if (handle->InitMysql() == false)
 			{
 				delete handle;
 				handle = NULL;
 				return NULL;
 			}
 
-			if(m_mum.AddEntry(handle) == false)
+			if (m_mum.AddEntry(handle) == false)
 			{
 				handle->FinalHandle();
 				delete handle;
@@ -428,9 +428,9 @@ MysqlHandle *MysqlPool::GetHandle(uint32 id)
 	return NULL;
 }
 
-void MysqlPool::PutHandle(MysqlHandle *handle)
+void MysqlPool::PutHandle(MysqlHandle* handle)
 {
-	if(handle)
+	if (handle)
 	{
 		handle->FreeHandle();
 	}
