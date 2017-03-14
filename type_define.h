@@ -24,6 +24,7 @@
 #include <fcntl.h>           /* For O_* constants */
 #include <errno.h>
 #include <algorithm>
+#include <sys/uio.h>
 
 using namespace std;
 

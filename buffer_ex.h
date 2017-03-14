@@ -3,6 +3,17 @@
 #include "type_define.h"
 #include "nocopyable.h"
 
+/// A buffer class modeled after org.jboss.netty.buffer.ChannelBuffer
+/////
+///// @code
+///// +-------------------+------------------+------------------+
+///// | prependable bytes |  readable bytes  |  writable bytes  |
+///// |                   |     (CONTENT)    |                  |
+///// +-------------------+------------------+------------------+
+///// |                   |                  |                  |
+///// 0      <=      readerIndex   <=   writerIndex    <=     size
+///// @endcode
+
 class BufferEx : public Noncopyable
 {
 public:
@@ -144,24 +155,75 @@ public:
 		return result;
 	}
 
-	
+	//buff 追加数据 长度len
+	void Append(const char* data, size_t len)
+	{
+		EnsureWriteableBytes(len);
+		std::copy(data, data + len, BeginWrite());
+		HasWriten(len);
+	}
 
+	void Append(const void* data, size_t len)
+	{
+		Append(static_cast<const char*>(data), len);
+	}
+
+	//确保buff能写入len个长度
+	void EnsureWriteableBytes(size_t len)
+	{
+		if(WriteableBytes() < len)
+		{
+			makeSpace(len);
+		}
+		assert(WriteableBytes() >= len);
+	}
+
+	//写入len长度，write 位置偏移
+	void HasWriten(size_t len)
+	{
+		assert(len <= WriteableBytes());
+		m_write_index += len;
+	}
+
+	//写入的数据回退len长度
+	void UnWrite(size_t len)
+	{
+		assert(len <= ReadableBytes());
+		m_write_index -= len;
+	}
+
+	//缓冲区交换
+	void Shrink(size_t reserve)
+	{
+		BufferEx other;
+		other.EnsureWriteableBytes(ReadableBytes() + reserve);
+		other.Append(Peek(), ReadableBytes());
+		this->Swap(other);
+	}
+
+	//获取buff的最大空间
+	size_t InternalCapacity() const
+	{
+		return m_buffer.capacity();
+	}
+
+	ssize_t ReadFd(int fd, int* savedErrno);
 private:
 	char* begin() {return &*m_buffer.begin();}
 	const char* begin() const { return &*m_buffer.begin();}
-	
+
 	//buff空间重新分配
 	void makeSpace(size_t len)
 	{
 		if(WriteableBytes() + PrependableBytes() < len + nCheapPrepend)
 		{
-			m_buffer.resize(m_write_index + len)
+			m_buffer.resize(m_write_index + len);
 		}
 		else
 		{
 			assert(nCheapPrepend < m_read_index);
 			size_t readable = ReadableBytes();
-			std::copy(begin() + m_read_index,begin()+ m_write_index,begin(), nCheapPrepend);
+			std::copy(begin() + m_read_index, begin() + m_write_index, begin());
 			m_read_index = nCheapPrepend;
 			m_write_index = m_read_index + readable;
 			assert(readable == ReadableBytes());
