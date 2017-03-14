@@ -2,7 +2,7 @@ CC		=	g++
 FLAGS	= 	-Wall -Werror -g
 SRCFILE	=	$(wildcard *.cpp)
 OBJS	=	$(patsubst %.cpp, %.o, $(SRCFILE))
-PROGRAM =	Main
+PROGRAM =	libLBFing.a
 LIBS 	=  -lpthread  -lrt
 INC 	=
 
@@ -25,8 +25,13 @@ defalut:	$(OBJS) $(PROGRAM)
 %.o:%.cpp
 	$(CC) $(FLAGS) $(INC) -c $< -o $@
 
+#$(PROGRAM):$(OBJS)
+#	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
 $(PROGRAM):$(OBJS)
-	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	ar rcs $@ $^
+	ranlib $(PROGRAM)
+
 .PHONY:clean
 clean:
 	$(RM) $(OBJS) $(PROGRAM)
