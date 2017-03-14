@@ -1,9 +1,9 @@
-CC		=	g++
-FLAGS	= 	-Wall -Werror -g
-SRCFILE	=	$(wildcard *.cpp)
-OBJS	=	$(patsubst %.cpp, %.o, $(SRCFILE))
-LIBS 	=  -lpthread  -lrt
-INC 	=  -I../
+CC      =   g++
+FLAGS   =   -Wall -Werror -g
+SRCFILE =   $(wildcard *.cpp)
+OBJS    =   $(patsubst %.cpp, %.o, $(SRCFILE))
+LIBS    =   -L../ -lLBFing -lpthread  -lrt
+INC     =   -I../
 
 LIBS_MYSQL= ${shell mysql_config --libs_r}
 CPPFLAGS_MYSQL=${shell mysql_config --cflags}
@@ -19,12 +19,51 @@ INC += $(CPPFLAGS_MYSQL)
 LIBS += $(LIBS_REDIS)
 INC += $(CPPFLAGS_REDIS)
 
-defalut:	buffer_ex_test
+PROGRAM = 	buffer_ex_test \
+		  	singleton_test \
+		  	entry_manager_test \
+		  	buffer_test \
+		  	timer_test \
+		  	xml_test \
+		  	json_test \
+		  	regex_test \
+		  	message_queueu_test \
+		  	mysql_test 
+
+
+defalut:	$(PROGRAM)
 
 %.o:%.cpp
 	$(CC) $(FLAGS) $(INC) -c $< -o $@
 
-buffer_ex_test:buffer_ex_test.o ../buffer_ex.o
+buffer_ex_test:buffer_ex_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+singleton_test:singleton_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+entry_manager_test:entry_manager_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+buffer_test:buffer_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+timer_test:timer_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+xml_test:xml_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+json_test:json_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+regex_test:regex_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+message_queueu_test:message_queueu_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+mysql_test:mysql_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 
 .PHONY:clean
