@@ -29,11 +29,71 @@ void TestBuff1()
 	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend + str2.size());
 	BOOST_CHECK_EQUAL(str2, string(50, 'x'));
 
+	buf.Append(str);
+	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 2 * str.size() - str2.size());
+	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize - 2 * str.size());
+	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend + str2.size());
+
+	const string str3 =  buf.RetrieveAllAsString();
+	BOOST_CHECK_EQUAL(str3.size(), 350);
+	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 0);
+	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize);
+	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend);
+	BOOST_CHECK_EQUAL(str3, string(350, 'x'));
+
 	cout << __FUNCTION__ << " success!!!" << endl;
 }
+
+void TestBuff2()
+{
+	BufferEx buf;
+	buf.Append(string(400, 'y'));
+	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 400);
+	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize - 400);
+
+	buf.Retrieve(50);
+	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 350);
+	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize - 400);
+	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend + 50);
+
+	buf.Append(string(1000, 'z'));
+	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 1350);
+	BOOST_CHECK_EQUAL(buf.WriteableBytes(), 0);
+	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend + 50); // FIXME
+
+	buf.RetrieveAll();
+	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 0);
+	BOOST_CHECK_EQUAL(buf.WriteableBytes(), 1400); // FIXME
+	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend);
+
+	cout << __FUNCTION__ << " success!!!" << endl;
+}
+
+void TestBuff3()
+{
+	BufferEx buf;
+	buf.Append(string(800, 'y'));
+	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 800);
+	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize - 800);
+
+	buf.Retrieve(500);
+	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 300);
+	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize - 800);
+	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend + 500);
+
+	buf.Append(string(300, 'z'));
+	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 600);
+	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize - 600);
+	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend);
+
+	cout << __FUNCTION__ << " success!!!" << endl;
+}
+
 
 int main()
 {
 	TestBuff1();
+	TestBuff2();
+	TestBuff3();
 	return 0;
 }
