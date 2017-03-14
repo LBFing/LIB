@@ -1,0 +1,33 @@
+CC		=	g++
+FLAGS	= 	-Wall -Werror -g
+SRCFILE	=	$(wildcard *.cpp)
+OBJS	=	$(patsubst %.cpp, %.o, $(SRCFILE))
+LIBS 	=  -lpthread  -lrt
+INC 	=  -I../
+
+LIBS_MYSQL= ${shell mysql_config --libs_r}
+CPPFLAGS_MYSQL=${shell mysql_config --cflags}
+
+LIBS_REDIS= ${shell pkg-config --libs hiredis}
+CPPFLAGS_REDIS=${shell pkg-config --cflags hiredis}
+
+#mysql库
+LIBS += $(LIBS_MYSQL)
+INC += $(CPPFLAGS_MYSQL)
+
+#redis库
+LIBS += $(LIBS_REDIS)
+INC += $(CPPFLAGS_REDIS)
+
+defalut:	buffer_ex_test
+
+%.o:%.cpp
+	$(CC) $(FLAGS) $(INC) -c $< -o $@
+
+buffer_ex_test:buffer_ex_test.o ../buffer_ex.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+.PHONY:clean
+clean:
+	$(RM) $(OBJS) $(PROGRAM)
+	$(RM) *.o

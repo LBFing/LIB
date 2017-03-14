@@ -168,6 +168,11 @@ public:
 		Append(static_cast<const char*>(data), len);
 	}
 
+	void Append(const string& data)
+	{
+		Append(data.c_str(),data.length());
+	}
+
 	//确保buff能写入len个长度
 	void EnsureWriteableBytes(size_t len)
 	{

@@ -4,3 +4,4 @@ pb_proto/protobuf/
 log/*
 tags
 *.a
+test/buffer_ex_test
