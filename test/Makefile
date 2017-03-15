@@ -31,7 +31,10 @@ PROGRAM = 	buffer_ex_test \
 		  	mysql_test \
 		  	var_type_test \
 		  	signal_test \
-		  	mem_shared_test 
+		  	mem_shared_test \
+		  	redis_test \
+		  	blocking_queue_test \
+		  	logger_test
 
 
 defalut:	$(PROGRAM)
@@ -76,6 +79,15 @@ signal_test:signal_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 
 mem_shared_test:mem_shared_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+redis_test:redis_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+blocking_queue_test:blocking_queue_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+logger_test:logger_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	
 .PHONY:clean

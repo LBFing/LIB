@@ -25,7 +25,7 @@ void* SharedMemoryManager::allSharedMemory(const char* filename)
 	m_fd = ::shm_open(m_filename.c_str(), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
 	if(m_fd == -1)
 	{
-		ERROR("打开文件失败 file:%s errno:%s", m_filename.c_str(), strerror(errno));
+		printf("打开文件失败 file:%s errno:%s\n", m_filename.c_str(), strerror(errno));
 		return NULL;
 	}
 
@@ -33,7 +33,7 @@ void* SharedMemoryManager::allSharedMemory(const char* filename)
 	//获取文件状态信息
 	if(::fstat(m_fd, &sb) == -1)
 	{
-		ERROR("获取文件信息失败 errno:%s", strerror(errno));
+		printf("获取文件信息失败 errno:%s\n", strerror(errno));
 		shm_unlink(m_filename.c_str());
 		return NULL;
 	}
@@ -44,7 +44,7 @@ void* SharedMemoryManager::allSharedMemory(const char* filename)
 		int32 nLen = ftruncate(m_fd, m_share_size);
 		if (nLen == -1)
 		{
-			ERROR("设置文件长度失败 file:%s cur_size:%lu set_size:%u errno:%s", m_filename.c_str(), sb.st_size, m_share_size, strerror(errno));
+			printf("设置文件长度失败 file:%s cur_size:%lu set_size:%u errno:%s\n", m_filename.c_str(), sb.st_size, m_share_size, strerror(errno));
 			shm_unlink(m_filename.c_str());
 			return NULL;
 		}
@@ -54,7 +54,7 @@ void* SharedMemoryManager::allSharedMemory(const char* filename)
 	m_pShared_mem = ::mmap(0, m_share_size, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
 	if(m_pShared_mem == MAP_FAILED)
 	{
-		ERROR("初始化共享内存失败:%s,%s", m_filename.c_str(), strerror(errno));
+		printf("初始化共享内存失败:%s,%s\n", m_filename.c_str(), strerror(errno));
 		shm_unlink(m_filename.c_str());
 		return NULL;
 	}
@@ -83,7 +83,7 @@ bool SharedMemoryManager::allocSharedMemory(const uint32 id, const void* p, cons
 			void* pShared = (char*)m_pShared_mem + m_max_share_num * sizeof (uint32) + i * SHARE_TRUNK_SIZE ;
 			if(pShared == NULL)
 			{
-				DEBUG("SharedMemory is NULL");
+				printf("SharedMemory is NULL\n");
 				return false;
 			}
 			else
@@ -97,7 +97,7 @@ bool SharedMemoryManager::allocSharedMemory(const uint32 id, const void* p, cons
 
 	if(m_share_num >= m_max_share_num)
 	{
-		ERROR("共享内存空间已满 分配失败 CurSize:%u", m_share_num);
+		printf("共享内存空间已满 分配失败 CurSize:%u\n", m_share_num);
 		return false;
 	}
 
@@ -106,7 +106,7 @@ bool SharedMemoryManager::allocSharedMemory(const uint32 id, const void* p, cons
 	void* pShared = (char*)m_pShared_mem + m_max_share_num * sizeof (uint32) + m_share_num * SHARE_TRUNK_SIZE ;
 	if(pShared == NULL)
 	{
-		DEBUG("SharedMemory is NULL");
+		printf("SharedMemory is NULL\n");
 		return false;
 	}
 	else
@@ -135,7 +135,7 @@ void* SharedMemoryManager::setSharedMemory(const uint32 id, bool& exist)
 		uint32 charid = *(uint32*)((char*)m_pShared_mem + i * sizeof(uint32));
 		if (charid == id) //找到共享数据
 		{
-			DEBUG("已存在于内存中 Id:%u", id);
+			printf("已存在于内存中 Id:%u\n", id);
 			exist = true;
 			void* pShared = (char*)m_pShared_mem + m_max_share_num * sizeof (uint32) + i * SHARE_TRUNK_SIZE ;
 			return pShared;
