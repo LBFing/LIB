@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __TYPE_DEFINE_H__
+#define __TYPE_DEFINE_H__
 
 #include <iostream>
 #include <assert.h>
@@ -41,3 +42,4 @@ typedef unsigned long long uint64;
 typedef unsigned long uLong;
 
 #define	SECOND 1000000
+#endif

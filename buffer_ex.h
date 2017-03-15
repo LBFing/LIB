@@ -1,5 +1,5 @@
 #ifndef __BUFFER_EX_H__
-#define  __BUFFER_EX_H__
+#define __BUFFER_EX_H__
 #include "type_define.h"
 #include "nocopyable.h"
 
@@ -170,7 +170,7 @@ public:
 
 	void Append(const string& data)
 	{
-		Append(data.c_str(),data.length());
+		Append(data.c_str(), data.length());
 	}
 
 	//确保buff能写入len个长度

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __ENTYR_MANAGER_H__
+#define __ENTYR_MANAGER_H__
+
 #include "type_define.h"
 #include "entry.h"
 
@@ -11,9 +13,9 @@ class EntryManager
 public:
 	EntryManager();
 	virtual ~EntryManager();
-	T *GetEntryById(uint32 id);
-	bool AddEntry(T *entry);
-	void RemoveEntry(T *entry);
+	T* GetEntryById(uint32 id);
+	bool AddEntry(T* entry);
+	void RemoveEntry(T* entry);
 	void RemoveEntryById(uint32 id);
 	void RemoveAllEntry();
 	uint32 Size() {return m_mapEntry.size();}
@@ -23,7 +25,7 @@ public:
 	{
 		for(EntryMapIter iter = m_mapEntry.begin(); iter != m_mapEntry.end(); iter++)
 		{
-			if(!callback.exec((T1 *)iter->second))
+			if(!callback.exec((T1*)iter->second))
 			{
 				return false;
 			}
@@ -33,7 +35,7 @@ public:
 private:
 	void ClearAll();
 private:
-	typedef map<uint32, T *> EntryMap;
+	typedef map<uint32, T*> EntryMap;
 	typedef typename EntryMap::iterator EntryMapIter;
 
 	EntryMap m_mapEntry;
@@ -56,7 +58,7 @@ EntryManager<T, bInc>::~EntryManager()
 }
 
 template<typename T, bool bInc>
-T *EntryManager<T, bInc>::GetEntryById(uint32 id)
+T* EntryManager<T, bInc>::GetEntryById(uint32 id)
 {
 	EntryMapIter iter = m_mapEntry.find(id);
 	if(iter == m_mapEntry.end())
@@ -70,7 +72,7 @@ T *EntryManager<T, bInc>::GetEntryById(uint32 id)
 }
 
 template<typename T, bool bInc>
-bool EntryManager<T, bInc>::AddEntry(T *entry)
+bool EntryManager<T, bInc>::AddEntry(T* entry)
 {
 	if(bInc)
 	{
@@ -82,7 +84,7 @@ bool EntryManager<T, bInc>::AddEntry(T *entry)
 		}
 		else
 		{
-			m_mapEntry.insert(make_pair<uint32, T *>(id, entry));
+			m_mapEntry.insert(make_pair<uint32, T*>(id, entry));
 			return true;
 		}
 	}
@@ -90,14 +92,14 @@ bool EntryManager<T, bInc>::AddEntry(T *entry)
 	{
 		m_increase++;
 		entry->SetId(m_increase);
-		m_mapEntry.insert(make_pair<uint32, T *>(entry->GetId(), entry));
+		m_mapEntry.insert(make_pair<uint32, T*>(entry->GetId(), entry));
 		return true;
 	}
 
 }
 
 template<typename T, bool bInc>
-void EntryManager<T, bInc>::RemoveEntry(T *entry)
+void EntryManager<T, bInc>::RemoveEntry(T* entry)
 {
 	m_mapEntry.erase(entry->GetId());
 	if(entry)
@@ -110,7 +112,7 @@ void EntryManager<T, bInc>::RemoveEntry(T *entry)
 template<typename T, bool bInc>
 void EntryManager<T, bInc>::RemoveEntryById(uint32 id)
 {
-	T *entry = GetEntryById(id);
+	T* entry = GetEntryById(id);
 	if(entry)
 	{
 		RemoveEntry(entry);
@@ -136,3 +138,4 @@ void EntryManager<T, bInc>::ClearAll()
 	}
 	m_mapEntry.clear();
 }
+#endif

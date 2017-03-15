@@ -1,3 +1,5 @@
+#ifndef __CONDITION_H__
+#define __CONDITION_H__
 #include "nocopyable.h"
 #include "type_define.h"
 #include "mutex.h"
@@ -33,3 +35,4 @@ private:
 	Mutex &m_mutex;
 	pthread_cond_t m_cond;
 };
+#endif

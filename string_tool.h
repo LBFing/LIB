@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ___STRING_TOOL_H__
+#define ___STRING_TOOL_H__
 #include "type_define.h"
 
 class StringTool
@@ -11,3 +12,4 @@ public:
 	static string  Format(const char* fmt, ...);
 	static string  VFormat(string& resultOut, const char* fmt, va_list argptr, int32 default_size = DEFAULT_BUFFER_SIZE);
 };
+#endif

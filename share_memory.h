@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __SHARE_MEMORY_H__
+#define __SHARE_MEMORY_H__
 
 #include "type_define.h"
 #include "singleton.h"
@@ -63,3 +64,5 @@ bool SharedMemoryManager::execEveryEntry(Callback<T>& cb)
 
 	return true;
 }
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __SINGLETON_H__
+#define __SINGLETON_H__
 #include "nocopyable.h"
 #include <assert.h>
 
@@ -43,3 +44,5 @@ protected:
 
 template<typename T>
 T *SingletonBase<T>::m_instance = NULL;
+
+#endif

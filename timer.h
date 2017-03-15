@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __TIMER_H__
+#define __TIMER_H__
+
 #include "type_define.h"
 #include "nocopyable.h"
 //时间定义类，封装对时间的操作
@@ -105,3 +107,5 @@ private:
 	int64 m_timesync;
 	Time m_clock;
 };
+
+#endif

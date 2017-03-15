@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __ENTRY_H__
+#define __ENTRY_H__
 #include "type_define.h"
 
 class Entry
@@ -43,3 +44,5 @@ inline int randBetween(int min, int max)
 		return min + (int)(((double)max - (double)min + 1.0) * rand_r(&seedp) / (RAND_MAX + 1.0));
 	}
 }
+
+#endif

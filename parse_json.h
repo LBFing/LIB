@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __PARSE_JSON_H__
+#define __PARSE_JSON_H__
 #include "type_define.h"
 #include "cjson.h"
 
@@ -16,6 +17,7 @@ private:
 	cJSON *m_pJson;
 };
 
+#endif
 /*
 char *makeJson()
 {

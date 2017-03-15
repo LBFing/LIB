@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __MESSAGE_QUEUE_H__
+#define __MESSAGE_QUEUE_H__
 
 #include "type_define.h"
 
@@ -26,3 +27,4 @@ public:
 	uint32 m_cmd_read;
 	uint32 m_cmd_write;
 };
+#endif

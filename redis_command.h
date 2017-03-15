@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __REDIS__COMMAND_H
+#define __REDIS__COMMAND_H
 
 #include "type_define.h"
 #include <hiredis/hiredis.h>
@@ -16,3 +17,4 @@ private:
 	redisReply* m_reply;
 };
 
+#endif

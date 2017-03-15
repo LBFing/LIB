@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __REGEX_PARSE_H__
+#define __REGEX_PARSE_H__
 #include <regex.h>
 #include "type_define.h"
 
@@ -19,3 +20,5 @@ private:
 	bool m_compiled;
 	bool m_matched;
 };
+
+#endif

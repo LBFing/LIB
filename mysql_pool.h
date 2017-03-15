@@ -1,6 +1,7 @@
-#pragma once
+#ifndef __MYSQL_POOL_H__
+#define __MYSQL_POOL_H__
+
 #include "type_define.h"
-#include "entry.h"
 #include "timer.h"
 #include "entry_manager.h"
 #include "var_type.h"
@@ -165,3 +166,6 @@ private:
 	MysqlPool*	m_pool;
 	MysqlHandle* m_handle;
 };
+
+
+#endif

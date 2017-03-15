@@ -28,7 +28,10 @@ PROGRAM = 	buffer_ex_test \
 		  	json_test \
 		  	regex_test \
 		  	message_queueu_test \
-		  	mysql_test 
+		  	mysql_test \
+		  	var_type_test \
+		  	signal_test \
+		  	mem_shared_test 
 
 
 defalut:	$(PROGRAM)
@@ -66,6 +69,15 @@ message_queueu_test:message_queueu_test.o
 mysql_test:mysql_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 
+var_type_test:var_type_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+signal_test:signal_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+mem_shared_test:mem_shared_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	
 .PHONY:clean
 clean:
 	$(RM) $(OBJS) $(PROGRAM)

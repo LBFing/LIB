@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __BUFFER_H__
+#define __BUFFER_H__
 #include "type_define.h"
 
 
@@ -11,18 +12,18 @@ const unsigned int trunkSize = 64 * 1024;
 template <typename T>
 class Buffer
 {
-public: 
-	Buffer(); 
-	inline void put(const unsigned char *buf, const unsigned int size); 
-	inline unsigned char *wr_buf(); 
-	inline unsigned char *rd_buf(); 
-	inline bool rd_ready() const; 
-	inline unsigned int rd_size() const; 
-	inline void rd_flip(unsigned int size); 
-	inline unsigned int wr_size() const; 
-	inline void wr_flip(const unsigned int size); 
-	inline void reset(); 
-	inline unsigned int maxSize() const; 
+public:
+	Buffer();
+	inline void put(const unsigned char *buf, const unsigned int size);
+	inline unsigned char *wr_buf();
+	inline unsigned char *rd_buf();
+	inline bool rd_ready() const;
+	inline unsigned int rd_size() const;
+	inline void rd_flip(unsigned int size);
+	inline unsigned int wr_size() const;
+	inline void wr_flip(const unsigned int size);
+	inline void reset();
+	inline unsigned int maxSize() const;
 	inline void wr_reserve(const unsigned int size);
 
 private:
@@ -31,7 +32,7 @@ private:
 	unsigned int m_currPtr;
 	T m_buffer;
 
-}; 
+};
 
 template <typename T>
 void Buffer<T>::put(const unsigned char *buf, const unsigned int size)
@@ -119,9 +120,9 @@ inline Buffer< std::vector<unsigned char > >::Buffer()
 	: m_maxSize(trunkSize)
 	, m_offPtr(0)
 	, m_currPtr(0)
-	, m_buffer(m_maxSize) 
+	, m_buffer(m_maxSize)
 {
-} 
+}
 
 template <>
 inline void BufferCmdQueue::wr_reserve(const unsigned int size)
@@ -131,4 +132,5 @@ inline void BufferCmdQueue::wr_reserve(const unsigned int size)
 		m_maxSize += (trunkSize * trunkCount(size + 8));
 		m_buffer.resize(m_maxSize);
 	}
-} 
+}
+#endif

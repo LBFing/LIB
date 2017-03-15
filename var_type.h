@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __VAR_TYPE_H__
+#define __VAR_TYPE_H__
 
 #include "type_define.h"
 
@@ -192,3 +193,4 @@ inline bool VarType::valid() const
 {
 	return !empty();
 }
+#endif

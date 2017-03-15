@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef __LOGGER_H__
+#define __LOGGER_H__
 #include "type_define.h"
 #include "timer.h"
 #include "mutex.h"
@@ -59,3 +59,4 @@ extern Logger *logger;
 #define INFO	SetLoggerHead( *logger, __FILE__, __LINE__ ).info
 #define WARN	SetLoggerHead( *logger, __FILE__, __LINE__ ).warn
 #define ERROR	SetLoggerHead( *logger, __FILE__, __LINE__ ).error
+#endif
