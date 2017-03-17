@@ -89,11 +89,43 @@ void TestBuff3()
 	cout << __FUNCTION__ << " success!!!" << endl;
 }
 
+void TestBuff4()
+{
+	BufferEx buf;
+	buf.Append(string(2000, 'y'));
+	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 2000);
+	BOOST_CHECK_EQUAL(buf.WriteableBytes(), 0);
+	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend);
+
+	buf.Retrieve(1500);
+	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 500);
+	BOOST_CHECK_EQUAL(buf.WriteableBytes(), 0);
+	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend+1500);
+
+	buf.Shrink(0);
+	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 500);
+	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize-500);
+	BOOST_CHECK_EQUAL(buf.RetrieveAllAsString(), string(500, 'y'));
+	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend);
+	cout << __FUNCTION__ << " success!!!" << endl;
+}
+
+void TestBuff5()
+{
+	BufferEx buf;
+	buf.Append(string(100000, 'x'));
+	const char* null = NULL;
+	BOOST_CHECK_EQUAL(buf.FindEOL(), null);
+	BOOST_CHECK_EQUAL(buf.FindEOL(buf.Peek()+90000), null);
+	cout << __FUNCTION__ << " success!!!" << endl;
+}
 
 int main()
 {
 	TestBuff1();
 	TestBuff2();
 	TestBuff3();
+	TestBuff4();
+	TestBuff5();
 	return 0;
 }
