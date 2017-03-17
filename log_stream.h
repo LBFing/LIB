@@ -43,6 +43,11 @@ public:
 	{
 		m_fun_cookie = cookie;
 	}
+
+	const char* Data() const { return m_data; }
+	int Length() const { return static_cast<int> (m_cur - m_data); }
+
+
 private:
 
 	const char* end() const {return m_data + sizeof(m_data);}
