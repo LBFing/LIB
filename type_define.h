@@ -16,6 +16,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <unistd.h>
@@ -26,13 +27,14 @@
 #include <errno.h>
 #include <algorithm>
 #include <sys/uio.h>
+#include <limits>
 
 using namespace std;
 
 typedef float f32;
 typedef double f64;
 typedef char int8;
-typedef	signed short int16;
+typedef signed short int16;
 typedef signed int int32;
 typedef signed long long int64;
 typedef unsigned char uint8;
@@ -41,5 +43,17 @@ typedef unsigned int uint32;
 typedef unsigned long long uint64;
 typedef unsigned long uLong;
 
-#define	SECOND 1000000
+#define  SECOND 1000000
+
+template <bool x> struct STATIC_ASSERTION_FAILURE;
+template <> struct STATIC_ASSERTION_FAILURE<true> { enum {value = 1};};
+template <int x> struct static_assert_test{};
+
+#define JOIN_TEST(a,b) a##b
+
+#define STATIC_ASSERT_CHECK(B) \
+	typedef static_assert_test<sizeof(STATIC_ASSERTION_FAILURE<(bool)(B)>)> \
+	JOIN_TEST(st_assert_test,__LINE__) __attribute__((unused))
+
+
 #endif

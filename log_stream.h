@@ -4,6 +4,7 @@
 
 #include "type_define.h"
 #include "nocopyable.h"
+#include "buffer_ex.h"
 
 const int32 kSmallBuffer = 4000;
 const int32 KLargeBuffer = 4000 * 1000;
@@ -83,6 +84,104 @@ private:
 };
 
 
+class LogStream : public Noncopyable
+{
+	typedef LogStream self;
+public:
+	typedef FixedBuffer<kSmallBuffer> Buffer;
+	self& operator<<(bool v)
+	{
+		m_buffer.Append( v ? "1" : "0", 1);
+		return *this;
+	}
+	self& operator<<(short);
+	self& operator<<(unsigned short);
+	self& operator<<(int);
+	self& operator<<(unsigned int);
+	self& operator<<(long);
+	self& operator<<(unsigned long);
+	self& operator<<(long long);
+	self& operator<<(unsigned long long);
+	self& operator<<(double);
+	self& operator<<(const void*);
+	self& operator<<(float v)
+	{
+		*this << static_cast<double>(v);
+		return *this;
+	}
+
+	self& operator<<(char v)
+	{
+		m_buffer.Append(&v, 1);
+		return *this;
+	}
+
+	self& operator<<(const char* v)
+	{
+		if(v)
+		{
+			m_buffer.Append(v, strlen(v));
+		}
+		else
+		{
+			m_buffer.Append("(null)", 6);
+		}
+		return *this;
+	}
+
+	self& operator<<(const unsigned char* v)
+	{
+		return operator<<(reinterpret_cast<const char*>(v));
+	}
+
+	self& operator<<(const string& v)
+	{
+		m_buffer.Append(v.c_str(), v.size());
+		return *this;
+	}
+
+	self& operator<<(const Buffer& v)
+	{
+		*this << v.ToString();
+		return *this;
+	}
+
+	void Append(const char* data, int32 len)
+	{
+		m_buffer.Append(data, len);
+	}
+
+	const Buffer& GetBuffer()const {return m_buffer;}
+
+	void ResetBuffer() {m_buffer.Reset();}
+
+private:
+	void staticCheck();
+	template <typename T>
+	void formatInteger(T);
+
+	Buffer m_buffer;
+	static const int32 kMaxNumericSize = 32;
+};
+
+class Fmt
+{
+public:
+	template <typename T>
+	Fmt(const char* fmt, T value);
+	const char* Data() const {return m_buf;}
+
+	int Length() const {return m_length;}
+private:
+	char m_buf[32];
+	int32 m_length;
+};
+
+inline LogStream& operator<<(LogStream& s, const Fmt& fmt)
+{
+	s.Append(fmt.Data(), fmt.Length());
+	return s;
+}
 
 
 #endif
