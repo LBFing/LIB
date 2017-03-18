@@ -10,7 +10,7 @@ const int32 KLargeBuffer = 4000 * 1000;
 
 typedef void (*FunCookie)();
 
-template <int SIZE>
+template <int32 SIZE>
 class FixedBuffer : public Noncopyable
 {
 public:
@@ -29,7 +29,7 @@ public:
 	//添加字符空间
 	void Append(const char* buf, size_t len)
 	{
-		int32 avali_able = avali();
+		uint32 avali_able = Avail();
 		if(avali_able > len)
 		{
 			memcpy(m_cur, buf, len);
@@ -38,7 +38,7 @@ public:
 	}
 
 	//计算buff剩余空间
-	int Avail() const { return static_cast<int>(end() - Current()); }
+	int32 Avail() const { return static_cast<int32>(end() - Current()); }
 
 	//设置工作函数
 	void SetCookie(FunCookie cookie)
@@ -50,22 +50,22 @@ public:
 	const char* Data() const { return m_data; }
 
 	//返回当前已写的长度
-	int Length() const { return static_cast<int> (m_cur - m_data); }
+	int32 Length() const { return static_cast<int32> (m_cur - m_data); }
 
 	//返回当前的写的地址
-	char* Current() { return m_cur };
+	char* Current() const { return m_cur; };
 
 	//已写的空间便宜
 	void Add(size_t len) { m_cur += len; };
 
 	//缓存区重置
-	void Reset() { m_cur = m_data };
+	void Reset() { m_cur = m_data; };
 
 	//缓冲区数据清0
 	void BZero() { ::bzero(m_data, sizeof(m_data)); }
 
 	//调试使用
-	char char* DebugString();
+	const char* DebugString();
 
 	//账号当前已写数据为string
 	string ToString() const { return string(m_data, Length()); }

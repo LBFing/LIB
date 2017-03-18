@@ -4,7 +4,7 @@ template class FixedBuffer < kSmallBuffer > ;
 template class FixedBuffer < KLargeBuffer >;
 
 template<int SIZE>
-const char* FixedBuffer<SIZE>::debugString()
+const char* FixedBuffer<SIZE>::DebugString()
 {
 	*m_cur = '\0';
 	return m_cur;
