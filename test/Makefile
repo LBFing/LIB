@@ -2,7 +2,7 @@ CC      =   g++
 FLAGS   =   -Wall -Werror -g
 SRCFILE =   $(wildcard *.cpp)
 OBJS    =   $(patsubst %.cpp, %.o, $(SRCFILE))
-LIBS    =   -L../ -lLBFing -lpthread  -lrt
+LIBS    =   -L../build/lib -lLBFing -lpthread  -lrt
 INC     =   -I../
 
 LIBS_MYSQL= ${shell mysql_config --libs_r}
@@ -89,7 +89,7 @@ blocking_queue_test:blocking_queue_test.o
 
 logger_test:logger_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
-	
+
 .PHONY:clean
 clean:
 	$(RM) $(OBJS) $(PROGRAM)
