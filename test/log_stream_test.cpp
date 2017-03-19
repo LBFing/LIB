@@ -1,4 +1,5 @@
 #include "log_stream.h"
+#include "timer.h"
 
 #define BOOST_CHECK_EQUAL(a,b) \
 	if(a != b) \
@@ -205,8 +206,86 @@ void TestBuff1()
 
 }
 
+
+const size_t N = 1000000;
+
+template<typename T>
+void benchPrintf(const char* fmt)
+{
+	char buf[32];
+	Time t1;
+	for (size_t i = 0; i < N; ++i)
+	{
+		snprintf(buf, sizeof (buf), fmt, (T)(i));
+	}
+	Time t2;
+
+	printf("benchPrintf %lld\n", (t2.Msec() - t1.Msec()));
+}
+
+template<typename T>
+void benchStringStream()
+{
+	Time t1;
+	std::ostringstream os;
+
+	for (size_t i = 0; i < N; ++i)
+	{
+		os << (T)(i);
+		os.seekp(0, std::ios_base::beg);
+	}
+	Time t2;
+
+	printf("benchStringStream %lld\n", (t2.Msec() - t1.Msec()));
+
+}
+
+template<typename T>
+void benchLogStream()
+{
+	Time t1;
+	LogStream os;
+	for (size_t i = 0; i < N; ++i)
+	{
+		os << (T)(i);
+		os.ResetBuffer();
+	}
+	Time t2;
+
+	printf("benchLogStream %lld\n", (t2.Msec() - t1.Msec()));
+}
+
+
+void TestBuff2()
+{
+	benchPrintf<int>("%d");
+	puts("int");
+	benchPrintf<int>("%d");
+	benchStringStream<int>();
+	benchLogStream<int>();
+
+	puts("double");
+	benchPrintf<double>("%.12g");
+	benchStringStream<double>();
+	benchLogStream<double>();
+
+	puts("int64_t");
+	benchPrintf<int64_t>("%lld");
+	benchStringStream<int64_t>();
+	benchLogStream<int64_t>();
+
+	puts("void*");
+	benchPrintf<void*>("%p");
+	benchStringStream<void*>();
+	benchLogStream<void*>();
+
+
+	cout << __FUNCTION__ << " success!!!" << endl;
+}
 int main()
 {
 	TestBuff1();
+	TestBuff2();
+
 	return 0;
 }
