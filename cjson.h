@@ -97,10 +97,10 @@ extern cJSON *cJSON_CreateFloatArray(float *numbers,int count);
 extern cJSON *cJSON_CreateDoubleArray(double *numbers,int count);
 extern cJSON *cJSON_CreateStringArray(const char **szstr,int count);
 
-/* Append item to the specified array/object. */
+/* append item to the specified array/object. */
 extern void cJSON_AddItemToArray(cJSON *array, cJSON *item);
 extern void	cJSON_AddItemToObject(cJSON *object,const char *szstr,cJSON *item);
-/* Append reference to item to the specified array/object. Use this when you want to add an existing cJSON to a new cJSON, but don't want to corrupt your existing cJSON. */
+/* append reference to item to the specified array/object. Use this when you want to add an existing cJSON to a new cJSON, but don't want to corrupt your existing cJSON. */
 extern void cJSON_AddItemReferenceToArray(cJSON *array, cJSON *item);
 extern void	cJSON_AddItemReferenceToObject(cJSON *object,const char *szstr,cJSON *item);
 

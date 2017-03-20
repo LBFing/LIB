@@ -156,21 +156,21 @@ public:
 	}
 
 	//buff 追加数据 长度len
-	void Append(const char* data, size_t len)
+	void append(const char* data, size_t len)
 	{
 		EnsureWriteableBytes(len);
 		std::copy(data, data + len, BeginWrite());
 		HasWriten(len);
 	}
 
-	void Append(const void* data, size_t len)
+	void append(const void* data, size_t len)
 	{
-		Append(static_cast<const char*>(data), len);
+		append(static_cast<const char*>(data), len);
 	}
 
-	void Append(const string& data)
+	void append(const string& data)
 	{
-		Append(data.c_str(), data.length());
+		append(data.c_str(), data.length());
 	}
 
 	//确保buff能写入len个长度
@@ -202,7 +202,7 @@ public:
 	{
 		BufferEx other;
 		other.EnsureWriteableBytes(ReadableBytes() + reserve);
-		other.Append(Peek(), ReadableBytes());
+		other.append(Peek(), ReadableBytes());
 		this->Swap(other);
 	}
 

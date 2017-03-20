@@ -28,7 +28,7 @@ public:
 	}
 
 	//添加字符空间
-	void Append(const char* buf, size_t len)
+	void append(const char* buf, size_t len)
 	{
 		uint32 avali_able = Avail();
 		if(avali_able > len)
@@ -91,7 +91,7 @@ public:
 	typedef FixedBuffer<kSmallBuffer> Buffer;
 	self& operator<<(bool v)
 	{
-		m_buffer.Append( v ? "1" : "0", 1);
+		m_buffer.append( v ? "1" : "0", 1);
 		return *this;
 	}
 	self& operator<<(short);
@@ -112,7 +112,7 @@ public:
 
 	self& operator<<(char v)
 	{
-		m_buffer.Append(&v, 1);
+		m_buffer.append(&v, 1);
 		return *this;
 	}
 
@@ -120,11 +120,11 @@ public:
 	{
 		if(v)
 		{
-			m_buffer.Append(v, strlen(v));
+			m_buffer.append(v, strlen(v));
 		}
 		else
 		{
-			m_buffer.Append("(null)", 6);
+			m_buffer.append("(null)", 6);
 		}
 		return *this;
 	}
@@ -136,7 +136,7 @@ public:
 
 	self& operator<<(const string& v)
 	{
-		m_buffer.Append(v.c_str(), v.size());
+		m_buffer.append(v.c_str(), v.size());
 		return *this;
 	}
 
@@ -146,9 +146,9 @@ public:
 		return *this;
 	}
 
-	void Append(const char* data, int32 len)
+	void append(const char* data, int32 len)
 	{
-		m_buffer.Append(data, len);
+		m_buffer.append(data, len);
 	}
 
 	const Buffer& GetBuffer()const {return m_buffer;}
@@ -179,7 +179,7 @@ private:
 
 inline LogStream& operator<<(LogStream& s, const Fmt& fmt)
 {
-	s.Append(fmt.Data(), fmt.Length());
+	s.append(fmt.Data(), fmt.Length());
 	return s;
 }
 

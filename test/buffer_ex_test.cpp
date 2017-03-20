@@ -17,7 +17,7 @@ void TestBuff1()
 
 
 	const string str(200, 'x');
-	buf.Append(str);
+	buf.append(str);
 	BOOST_CHECK_EQUAL(buf.ReadableBytes(), str.size());
 	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize - str.size());
 	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend);
@@ -29,7 +29,7 @@ void TestBuff1()
 	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend + str2.size());
 	BOOST_CHECK_EQUAL(str2, string(50, 'x'));
 
-	buf.Append(str);
+	buf.append(str);
 	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 2 * str.size() - str2.size());
 	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize - 2 * str.size());
 	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend + str2.size());
@@ -47,7 +47,7 @@ void TestBuff1()
 void TestBuff2()
 {
 	BufferEx buf;
-	buf.Append(string(400, 'y'));
+	buf.append(string(400, 'y'));
 	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 400);
 	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize - 400);
 
@@ -56,7 +56,7 @@ void TestBuff2()
 	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize - 400);
 	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend + 50);
 
-	buf.Append(string(1000, 'z'));
+	buf.append(string(1000, 'z'));
 	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 1350);
 	BOOST_CHECK_EQUAL(buf.WriteableBytes(), 0);
 	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend + 50); // FIXME
@@ -72,7 +72,7 @@ void TestBuff2()
 void TestBuff3()
 {
 	BufferEx buf;
-	buf.Append(string(800, 'y'));
+	buf.append(string(800, 'y'));
 	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 800);
 	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize - 800);
 
@@ -81,7 +81,7 @@ void TestBuff3()
 	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize - 800);
 	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend + 500);
 
-	buf.Append(string(300, 'z'));
+	buf.append(string(300, 'z'));
 	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 600);
 	BOOST_CHECK_EQUAL(buf.WriteableBytes(), BufferEx::nInitialSize - 600);
 	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend);
@@ -92,7 +92,7 @@ void TestBuff3()
 void TestBuff4()
 {
 	BufferEx buf;
-	buf.Append(string(2000, 'y'));
+	buf.append(string(2000, 'y'));
 	BOOST_CHECK_EQUAL(buf.ReadableBytes(), 2000);
 	BOOST_CHECK_EQUAL(buf.WriteableBytes(), 0);
 	BOOST_CHECK_EQUAL(buf.PrependableBytes(), BufferEx::nCheapPrepend);
@@ -113,7 +113,7 @@ void TestBuff4()
 void TestBuff5()
 {
 	BufferEx buf;
-	buf.Append(string(100000, 'x'));
+	buf.append(string(100000, 'x'));
 	const char* null = NULL;
 	BOOST_CHECK_EQUAL(buf.FindEOL(), null);
 	BOOST_CHECK_EQUAL(buf.FindEOL(buf.Peek()+90000), null);

@@ -26,7 +26,7 @@ ssize_t BufferEx::ReadFd(int fd, int* saveErrno)
 	else
 	{
 		m_write_index = m_buffer.size();
-		Append(extrabuf, n - writeable);
+		append(extrabuf, n - writeable);
 	}
 
 	return n;
