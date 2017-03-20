@@ -3,13 +3,13 @@
 #include <iostream>
 using namespace std;
 
-class Noncopyable
+class Nocopyable
 {
 protected:
-	Noncopyable() {};
-	~Noncopyable() {};
+	Nocopyable() {};
+	~Nocopyable() {};
 private:
-	Noncopyable(const Noncopyable&);
-	const Noncopyable& operator = (const Noncopyable&);
+	Nocopyable(const Nocopyable&);
+	const Nocopyable& operator = (const Nocopyable&);
 };
 #endif

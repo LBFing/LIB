@@ -3,7 +3,7 @@
 #include "nocopyable.h"
 #include "type_define.h"
 
-class Mutex : private Noncopyable
+class Mutex : private Nocopyable
 {
 public:
 	Mutex()
@@ -37,7 +37,7 @@ private:
 };
 
 
-class MutexLockGuard : private Noncopyable
+class MutexLockGuard : private Nocopyable
 {
 public:
 	explicit MutexLockGuard(Mutex& mutex) : m_mutex(mutex)
@@ -53,7 +53,7 @@ private:
 	Mutex& m_mutex;
 };
 
-class RWLock : private Noncopyable
+class RWLock : private Nocopyable
 {
 public:
 	RWLock()

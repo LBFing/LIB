@@ -4,7 +4,7 @@
 #include "type_define.h"
 #include "mutex.h"
 
-class Conditoin : private Noncopyable
+class Conditoin : private Nocopyable
 {
 public:
 	Conditoin(Mutex& mutex) : m_mutex(mutex)

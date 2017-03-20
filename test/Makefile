@@ -35,7 +35,9 @@ PROGRAM = 	buffer_ex_test \
 		  	redis_test \
 		  	blocking_queue_test \
 		  	logger_test \
-			log_stream_test
+		  	log_stream_test \
+			file_util_test
+
 
 
 defalut:	$(PROGRAM)
@@ -94,6 +96,8 @@ logger_test:logger_test.o
 log_stream_test:log_stream_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 
+file_util_test:file_util_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 .PHONY:clean
 clean:
 	$(RM) $(OBJS) $(PROGRAM)

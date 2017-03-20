@@ -63,7 +63,7 @@ private:
 };
 
 //定时器封装
-class Timer : public Noncopyable
+class Timer : public Nocopyable
 {
 public:
 	explicit Timer(const uint64 cycle, bool bBegin = false, const uint64 delay = 0);
@@ -88,7 +88,7 @@ private:
 };
 
 
-class Clocker: public Noncopyable
+class Clocker: public Nocopyable
 {
 public:
 	// 以当前时间开始，interval作为闹钟周期，cycle作为闹钟点构造一个闹钟

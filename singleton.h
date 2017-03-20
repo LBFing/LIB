@@ -4,10 +4,10 @@
 #include <assert.h>
 
 //单例模式基类
-//创建单例时，继承此类，privte Noncopyable 紧致对象的new 拷贝构造，赋值操作
+//创建单例时，继承此类，privte Nocopyable 紧致对象的new 拷贝构造，赋值操作
 //必须调用newInstance
 template <typename T>
-class SingletonBase : private Noncopyable
+class SingletonBase : private Nocopyable
 {
 protected:
 	SingletonBase() {}

@@ -14,7 +14,7 @@
 ///// 0      <=      readerIndex   <=   writerIndex    <=     size
 ///// @endcode
 
-class BufferEx : public Noncopyable
+class BufferEx : public Nocopyable
 {
 public:
 	static const size_t nCheapPrepend = 8;

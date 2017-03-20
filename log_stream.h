@@ -12,7 +12,7 @@ const int32 KLargeBuffer = 4000 * 1000;
 typedef void (*FunCookie)();
 
 template <int32 SIZE>
-class FixedBuffer : public Noncopyable
+class FixedBuffer : public Nocopyable
 {
 public:
 	//设置开始回调
@@ -84,7 +84,7 @@ private:
 };
 
 
-class LogStream : public Noncopyable
+class LogStream : public Nocopyable
 {
 	typedef LogStream self;
 public:

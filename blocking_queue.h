@@ -4,7 +4,7 @@
 #include "nocopyable.h"
 #include "condition.h"
 template<typename T>
-class BlockingQueue : public Noncopyable
+class BlockingQueue : public Nocopyable
 {
 public:
 	BlockingQueue() : m_mutex(), m_cond(m_mutex), m_deqQueue() {}
