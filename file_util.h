@@ -41,7 +41,7 @@ private:
 };
 
 template<typename String>
-int ReadFile(string& filename,
+int32 ReadFile(string& filename,
              int32 maxSize,
              String* content,
              int64* fileSize = NULL,

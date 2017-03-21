@@ -153,12 +153,12 @@ int32 ReadSmallFile::ReadToBuffer(int32* size)
 	return err;
 }
 
-template int ReadFile(string& filename,
+template int32 ReadFile(string& filename,
                       int32 maxSize,
                       string* content,
                       int64*, int64*, int64*);
 
-template int ReadSmallFile::ReadToString(
+template int32 ReadSmallFile::ReadToString(
     int32 maxSize,
     string* content,
     int64*, int64*, int64*);
