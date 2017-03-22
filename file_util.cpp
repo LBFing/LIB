@@ -1,6 +1,6 @@
 #include "file_util.h"
 
-appendFile::appendFile(string& filename)
+AppendFile::AppendFile(string& filename)
 {
 	m_writeBytes = 0;
 	m_fp = ::fopen(filename.c_str(), "ae");
@@ -8,12 +8,12 @@ appendFile::appendFile(string& filename)
 	::setbuffer(m_fp, m_buffer, sizeof(m_buffer));
 }
 
-appendFile::~appendFile()
+AppendFile::~AppendFile()
 {
 	::fclose(m_fp);
 }
 
-void appendFile::append(const char* log_line, const size_t len)
+void AppendFile::append(const char* log_line, const size_t len)
 {
 	size_t n = write(log_line, len);
 	size_t remain = len - n;
@@ -25,7 +25,7 @@ void appendFile::append(const char* log_line, const size_t len)
 			int32 err = ::ferror(m_fp);
 			if (err)
 			{
-				::fprintf(stderr, "appendFile::append() failed:%d\n", err);
+				::fprintf(stderr, "AppendFile::append() failed:%d\n", err);
 			}
 			break;
 		}
@@ -38,12 +38,12 @@ void appendFile::append(const char* log_line, const size_t len)
 	m_writeBytes += len;
 }
 
-void appendFile::Flush()
+void AppendFile::Flush()
 {
 	::fflush(m_fp);
 }
 
-size_t appendFile::write(const char* log_line, size_t len)
+size_t AppendFile::write(const char* log_line, size_t len)
 {
 	return ::fwrite_unlocked(log_line, 1, len, m_fp);
 }

@@ -21,11 +21,11 @@ private:
 	char m_buf[kBufferSize];
 };
 
-class appendFile : public Nocopyable
+class AppendFile : public Nocopyable
 {
 public:
-	explicit appendFile(string& filename);
-	~appendFile();
+	explicit AppendFile(string& filename);
+	~AppendFile();
 
 	void append(const char* log_line, const size_t len);
 
