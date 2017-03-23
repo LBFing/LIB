@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <sys/uio.h>
 #include <limits>
+#include <memory>
 
 using namespace std;
 

@@ -38,7 +38,7 @@ void AppendFile::append(const char* log_line, const size_t len)
 	m_writeBytes += len;
 }
 
-void AppendFile::Flush()
+void AppendFile::flush()
 {
 	::fflush(m_fp);
 }

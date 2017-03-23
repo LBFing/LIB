@@ -29,7 +29,7 @@ public:
 
 	void append(const char* log_line, const size_t len);
 
-	void Flush();
+	void flush();
 
 	size_t WrittenBytes() const {return m_writeBytes;};
 private:
