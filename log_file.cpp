@@ -10,16 +10,8 @@ LogFile::LogFile(const string& basename, size_t roll_size, bool thread_safe, int
 	, m_last_roll(0)
 	, m_last_flush(0)
 	, m_start_period(0)
+	, m_mutex(thread_safe ? new Mutex : NULL)
 {
-	if (thread_safe)
-	{
-		m_mutex.reset(new Mutex);
-	}
-	else
-	{
-		m_mutex.release();
-	}
-
 	assert(basename.find('/') == string::npos);
 	RollFile();
 }

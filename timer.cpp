@@ -16,7 +16,7 @@ void Time::AddDelay(const uint64 delay)
 	m_msec = Msec();
 }
 
-uint64 Time::Sec() const
+uint32 Time::Sec() const
 {
 	tzset();
 	return m_ts.tv_sec - m_timesync;
@@ -32,6 +32,10 @@ uint64 Time::Usec() const
 	return Sec() * 1000000L + m_ts.tv_nsec / 1000L;
 }
 
+uint32 Time::LeftUsec() const
+{
+	return m_ts.tv_nsec / 1000L;
+}
 uint64 Time::Elapse(const Time& rt) const
 {
 	if(rt.m_msec  < m_msec)
@@ -44,12 +48,20 @@ uint64 Time::Elapse(const Time& rt) const
 	}
 }
 
-void Time::Format(char* buffer, size_t bufferlen, const char* format)
+int32 Time::Format(char* buffer, size_t bufferlen, const char* format)
 {
 	struct tm tm_data;
 	time_t sec = (time_t) Sec();
 	localtime_r(&sec, &tm_data);
-	strftime(buffer, bufferlen, format, &tm_data);
+	int32 len = snprintf(buffer, bufferlen, format,
+	                   tm_data.tm_year + 1900,
+	                   tm_data.tm_mon + 1,
+	                   tm_data.tm_mday,
+	                   tm_data.tm_hour,
+	                   tm_data.tm_min,
+	                   tm_data.tm_sec);
+	return len;
+
 }
 //=====================================================================
 

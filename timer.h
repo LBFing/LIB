@@ -50,11 +50,12 @@ public:
 	//delay为毫秒级别的
 	void AddDelay(const uint64 delay);
 	void Now();
-	uint64 Sec() const;
+	uint32 Sec() const;
 	uint64 Msec() const;
 	uint64 Usec() const;
+	uint32  LeftUsec() const;
 	uint64 Elapse(const Time& rt) const;
-	void Format(char *buffer, size_t bufferlen, const char *format = "%C/%m/%d %T");
+	int32 Format(char *buffer, size_t bufferlen, const char *format = "%4d%02d%02d %02d:%02d:%02d");
 private:
 	friend class Clocker;
 	struct timespec m_ts;
