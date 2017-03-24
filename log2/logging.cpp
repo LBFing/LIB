@@ -42,6 +42,27 @@ inline LogStream& operator<<(LogStream& s, const Logging::SourceFile& v)
 	return s;
 }
 
+
+Logging::LogLevel InitLoggingLevel()
+{
+	return Logging::DEBUG;
+}
+
+Logging::LogLevel g_logLevel = InitLoggingLevel();
+
+void DefaultOutPut(const char* msg, int32 len)
+{
+	fwrite(msg, 1, len, stdout);
+}
+
+void DefalutFlush()
+{
+	fflush(stdout);
+}
+
+Logging::OutPutFunc g_output = DefaultOutPut;
+Logging::FlushFunc g_flush = DefalutFlush;
+
 Logging::Impl::Impl(LogLevel level, int32 savedErrno, const SourceFile& file, int32 line)
 	: m_time()
 	, m_stream()
@@ -74,4 +95,41 @@ void Logging::Impl::FormatTime()
 void Logging::Impl::Finish()
 {
 	m_stream << " - " << m_basename << ":" << m_line << "\n";
+}
+
+
+Logging::Logging(SourceFile file, int32 line) : m_Impl(DEBUG, 0, file, line)
+{
+
+}
+Logging::Logging(SourceFile file, int32 line, LogLevel level): m_Impl(level, 0, file, line)
+{
+
+}
+
+Logging::Logging(SourceFile file, int32 line, LogLevel level, const char* func) : m_Impl(level, 0, file, line)
+{
+	m_Impl.m_stream << func << ' ';
+}
+
+Logging::~Logging()
+{
+	m_Impl.Finish();
+	const LogStream::Buffer& buf(Stream().GetBuffer());
+	g_output(buf.Data(), buf.Length());
+}
+
+void Logging::SetLogLevel(Logging::LogLevel level)
+{
+	g_logLevel = level;
+}
+
+void Logging::SetOutPut(OutPutFunc out)
+{
+	g_output = out;
+}
+
+void Logging::SetFlush(FlushFunc flush)
+{
+	g_flush = flush;
 }

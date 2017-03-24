@@ -98,6 +98,7 @@ log_stream_test:log_stream_test.o
 
 file_util_test:file_util_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
 .PHONY:clean
 clean:
 	$(RM) $(OBJS) $(PROGRAM)
