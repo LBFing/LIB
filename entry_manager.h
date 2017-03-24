@@ -84,7 +84,7 @@ bool EntryManager<T, bInc>::AddEntry(T* entry)
 		}
 		else
 		{
-			m_mapEntry.insert(make_pair<uint32, T*>(id, entry));
+			m_mapEntry.insert(make_pair(id, entry));
 			return true;
 		}
 	}
@@ -92,7 +92,7 @@ bool EntryManager<T, bInc>::AddEntry(T* entry)
 	{
 		m_increase++;
 		entry->SetId(m_increase);
-		m_mapEntry.insert(make_pair<uint32, T*>(entry->GetId(), entry));
+		m_mapEntry.insert(make_pair(entry->GetId(), entry));
 		return true;
 	}
 

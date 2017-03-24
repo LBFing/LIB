@@ -1,5 +1,5 @@
 CC		=	g++
-FLAGS	= 	-Wall -Werror -g
+FLAGS	= 	-Wall -Werror -g -std=c++11
 SRCFILE	=	$(wildcard *.cpp)
 OBJS	=	$(patsubst %.cpp, %.o, $(SRCFILE))
 PROGRAM =	libLBFing.a
