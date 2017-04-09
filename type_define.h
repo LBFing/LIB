@@ -20,7 +20,8 @@
 #include <signal.h>
 #include <stdarg.h>
 #include <unistd.h>
-#include <sys/types.h>
+#include <sys/syscall.h>
+#include <sys/prctl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>        /* For mode constants */
 #include <fcntl.h>           /* For O_* constants */
