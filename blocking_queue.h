@@ -38,7 +38,7 @@ public:
 	}
 private:
 	mutable Mutex m_mutex;
-	Conditoin m_cond;
+	Condition m_cond;
 	std::deque<T> m_deqQueue;
 };
 #endif

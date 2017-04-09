@@ -1,3 +1,5 @@
+#ifndef __THREAD_H__
+#define __THREAD_H__
 #include "type_define.h"
 #include "atomic.h"
 #include "nocopyable.h"
@@ -68,4 +70,4 @@ private:
 	static AtomicInt32 m_numCreated;
 };
 
-
+#endif

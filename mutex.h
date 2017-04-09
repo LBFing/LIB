@@ -2,6 +2,7 @@
 #define __MUTXT_H__
 #include "nocopyable.h"
 #include "type_define.h"
+#include "thread.h"
 
 class Mutex : private Nocopyable
 {
@@ -17,9 +18,11 @@ public:
 	void Lock()
 	{
 		pthread_mutex_lock(&m_mutex);
+		AssignHolder();
 	}
 	void UnLock()
 	{
+		UnassignHolder();
 		pthread_mutex_unlock(&m_mutex);
 	}
 	bool TryLock()
@@ -32,8 +35,29 @@ public:
 		return &m_mutex;
 	}
 
+	void AssignHolder()
+	{
+		m_holder = CurrentThread::Tid();
+	}
+
+	void UnassignHolder()
+	{
+		m_holder = 0;
+	}
+
+	bool isLockedByThisThread() const
+	{
+		return m_holder == CurrentThread::Tid();
+	}
+
+	void AssertLocked() const
+	{
+		assert(isLockedByThisThread());
+	}
+
 private:
 	pthread_mutex_t m_mutex;
+	pid_t m_holder;
 };
 
 

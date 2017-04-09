@@ -4,14 +4,14 @@
 #include "type_define.h"
 #include "mutex.h"
 
-class Conditoin : private Nocopyable
+class Condition : private Nocopyable
 {
 public:
-	Conditoin(Mutex& mutex) : m_mutex(mutex)
+	Condition(Mutex& mutex) : m_mutex(mutex)
 	{
 		pthread_cond_init(&m_cond,NULL);
 	}
-	~Conditoin()
+	~Condition()
 	{
 		pthread_cond_destroy(&m_cond);
 	}
