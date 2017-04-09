@@ -1,5 +1,5 @@
 CC      =   g++
-FLAGS   =   -Wall -Werror -g
+FLAGS   =   -Wall -Werror -g -std=c++11
 SRCFILE =   $(wildcard *.cpp)
 OBJS    =   $(patsubst %.cpp, %.o, $(SRCFILE))
 LIBS    =   -L../build/lib -lLBFing -lpthread  -lrt
@@ -35,8 +35,7 @@ PROGRAM = 	buffer_ex_test \
 		  	redis_test \
 		  	blocking_queue_test \
 		  	logger_test \
-		  	log_stream_test \
-			file_util_test
+			thread_test
 
 
 
@@ -93,12 +92,8 @@ blocking_queue_test:blocking_queue_test.o
 logger_test:logger_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 
-log_stream_test:log_stream_test.o
+thread_test:thread_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
-
-file_util_test:file_util_test.o
-	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
-
 .PHONY:clean
 clean:
 	$(RM) $(OBJS) $(PROGRAM)
