@@ -35,7 +35,8 @@ PROGRAM = 	buffer_ex_test \
 		  	redis_test \
 		  	blocking_queue_test \
 		  	logger_test \
-			thread_test
+			thread_test \
+			threadpoll_test
 
 
 
@@ -94,6 +95,10 @@ logger_test:logger_test.o
 
 thread_test:thread_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+threadpool_test:threadpool_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
 .PHONY:clean
 clean:
 	$(RM) $(OBJS) $(PROGRAM)
