@@ -36,7 +36,7 @@ PROGRAM = 	buffer_ex_test \
 		  	blocking_queue_test \
 		  	logger_test \
 			thread_test \
-			threadpoll_test
+			threadpool_test
 
 
 

@@ -11,20 +11,24 @@ public:
 	{
 		pthread_mutex_init(&m_mutex, NULL);
 	}
+
 	~Mutex()
 	{
 		pthread_mutex_destroy(&m_mutex);
 	}
+
 	void Lock()
 	{
 		pthread_mutex_lock(&m_mutex);
 		AssignHolder();
 	}
+
 	void UnLock()
 	{
 		UnassignHolder();
 		pthread_mutex_unlock(&m_mutex);
 	}
+
 	bool TryLock()
 	{
 		return (pthread_mutex_trylock(&m_mutex) == 0);
@@ -56,6 +60,21 @@ public:
 	}
 
 private:
+	friend class Condition;
+	class UnassignGuard : private Nocopyable
+	{
+	public:
+		UnassignGuard(Mutex& owner) :  mutex_(owner)
+		{
+			mutex_.UnassignHolder();
+		}
+		~UnassignGuard()
+		{
+			mutex_.AssignHolder();
+		}
+	private:
+		Mutex& mutex_;
+	};
 	pthread_mutex_t m_mutex;
 	pid_t m_holder;
 };

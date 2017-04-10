@@ -18,6 +18,7 @@ public:
 
 	void Wait()
 	{
+		Mutex::UnassignGuard ug(m_mutex);
 		pthread_cond_wait(&m_cond,m_mutex.GetPthreadMutex());
 	}
 

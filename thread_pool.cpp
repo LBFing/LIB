@@ -87,7 +87,7 @@ void ThreadPool::Run(const Task& task)
 		assert(!isFull());
 
 		m_queue.push_back(std::move(task));
-		m_notFull.Notify();
+		m_notEmpty.Notify();
 	}
 }
 
