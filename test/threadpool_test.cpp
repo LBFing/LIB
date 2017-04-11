@@ -37,10 +37,10 @@ void test(int32 maxSize)
 
 int main()
 {
-	test(0);
-	test(1);
-	test(5);
-	test(10);
+	//test(0);
+	//test(1);
+	//test(5);
+	//test(10);
 	test(50);
 	return 0;
 }
