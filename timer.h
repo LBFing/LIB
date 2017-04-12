@@ -3,6 +3,7 @@
 
 #include "type_define.h"
 #include "nocopyable.h"
+#include "atomic.h"
 //时间定义类，封装对时间的操作
 class Time
 {
@@ -167,7 +168,7 @@ public:
 	static const int32 kMicroSecondsPerSecond = 1000000;
 private:
 	int64 m_microSeconds;
-	
+
 };
 
 inline bool operator<(Timestamp& lhs, Timestamp& rhs)
@@ -193,14 +194,63 @@ inline bool operator>=(Timestamp& lhs, Timestamp& rhs)
 
 inline double TimeDiff(Timestamp& high, Timestamp& low)
 {
-  int64 diff = high.GetMicroSeconds() - low.GetMicroSeconds();
-  return static_cast<double>(diff) / Timestamp::kMicroSecondsPerSecond;
+	int64 diff = high.GetMicroSeconds() - low.GetMicroSeconds();
+	return static_cast<double>(diff) / Timestamp::kMicroSecondsPerSecond;
 }
 
 inline Timestamp addTime(Timestamp& timestamp, double seconds)
 {
-  int64 delta = static_cast<int64>(seconds * Timestamp::kMicroSecondsPerSecond);
-  return Timestamp(timestamp.GetMicroSeconds() + delta);
+	int64 delta = static_cast<int64>(seconds * Timestamp::kMicroSecondsPerSecond);
+	return Timestamp(timestamp.GetMicroSeconds() + delta);
 }
+
+
+typedef std::function<void()> TimerCallback;
+class TimerEx : private Nocopyable
+{
+public:
+	TimerEx(const TimerCallback& cb, Timestamp when, double interval)
+		: m_callback(cb),
+		  m_expiration(when),
+		  m_interval(interval),
+		  m_repeat(interval > 0.0),
+		  m_sequence(m_numCreated.IncrementAndGet())
+	{ }
+
+	void Run()const
+	{
+		m_callback();
+	}
+
+	Timestamp Expiration() const {return m_expiration;}
+	bool Repeat() const {return m_repeat;}
+	int64 Sequence() const { return m_sequence;}
+
+	void Restart(Timestamp now);
+
+	static int64 NumCreated() {return m_numCreated.Get();}
+private:
+	const TimerCallback m_callback;
+	Timestamp m_expiration;
+	const double m_interval;
+	const bool m_repeat;
+	const int64 m_sequence;
+	static AtomicInt64 m_numCreated;
+};
+
+
+class TimerId
+{
+public:
+	TimerId() : m_timer(NULL),m_sequence(0) {}
+
+	TimerId(TimerEx *timer,int64 seq) : m_timer(timer),m_sequence(seq){}
+
+	friend class TimerQueue;
+
+private:
+	TimerEx* m_timer;
+	int64 m_sequence;
+};
 
 #endif

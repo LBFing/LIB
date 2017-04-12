@@ -276,3 +276,15 @@ Timestamp Timestamp::Now()
 	return Timestamp(seconds * kMicroSecondsPerSecond + tv.tv_usec);
 }
 
+AtomicInt64 TimerEx::m_numCreated;
+void TimerEx::Restart(Timestamp now)
+{
+	if(m_repeat)
+	{
+		m_expiration = addTime(now,m_interval);
+	}
+	else
+	{
+		m_expiration = Timestamp::Invalid();
+	}
+}
