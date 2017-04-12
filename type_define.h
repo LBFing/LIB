@@ -30,6 +30,7 @@
 #include <sys/uio.h>
 #include <limits>
 #include <memory>
+#include <poll.h>
 
 using namespace std;
 
