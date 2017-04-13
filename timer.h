@@ -242,9 +242,9 @@ private:
 class TimerId
 {
 public:
-	TimerId() : m_timer(NULL),m_sequence(0) {}
+	TimerId() : m_timer(NULL), m_sequence(0) {}
 
-	TimerId(TimerEx *timer,int64 seq) : m_timer(timer),m_sequence(seq){}
+	TimerId(TimerEx* timer, int64 seq) : m_timer(timer), m_sequence(seq) {}
 
 	friend class TimerQueue;
 
@@ -252,5 +252,6 @@ private:
 	TimerEx* m_timer;
 	int64 m_sequence;
 };
+
 
 #endif

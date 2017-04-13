@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <algorithm>
 #include <sys/uio.h>
+#include <sys/timerfd.h>
 #include <limits>
 #include <memory>
 #include <poll.h>
