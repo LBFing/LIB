@@ -171,22 +171,22 @@ private:
 
 };
 
-inline bool operator<(Timestamp& lhs, Timestamp& rhs)
+inline bool operator<(Timestamp lhs, Timestamp rhs)
 {
 	return lhs.GetMicroSeconds() < rhs.GetMicroSeconds();
 }
 
-inline bool operator<=(Timestamp& lhs, Timestamp& rhs)
+inline bool operator<=(Timestamp lhs, Timestamp rhs)
 {
 	return lhs.GetMicroSeconds() <= rhs.GetMicroSeconds();
 }
 
-inline bool operator>(Timestamp& lhs, Timestamp& rhs)
+inline bool operator>(Timestamp lhs, Timestamp rhs)
 {
 	return lhs.GetMicroSeconds() > rhs.GetMicroSeconds();
 }
 
-inline bool operator>=(Timestamp& lhs, Timestamp& rhs)
+inline bool operator>=(Timestamp lhs, Timestamp rhs)
 {
 	return lhs.GetMicroSeconds() >= rhs.GetMicroSeconds();
 }

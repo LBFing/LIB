@@ -10,6 +10,9 @@ class TimerQueue : private Nocopyable
 public:
 	TimerQueue(EventLoop* loop);
 	~TimerQueue();
+
+	TimerId AddTimer(const TimerCallback& cb, Timestamp when, double interval);
+	void Cancel(TimerId timerId);
 private:
 	typedef std::pair<Timestamp, TimerEx*> TimerEntry;
 	typedef std::set<TimerEntry> TimerSet;
@@ -17,7 +20,7 @@ private:
 	typedef std::set<ActiveTimer> ActiveTimerSet;
 
 	void addTimerInLoop(TimerEx* timer);
-	void cancleInLoop(TimerId timerId);
+	void cancelInLoop(TimerId timerId);
 
 	void handleRead();
 
