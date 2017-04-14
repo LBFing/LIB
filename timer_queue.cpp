@@ -106,7 +106,7 @@ bool TimerQueue::insert(TimerEx* timer)
 	}
 
 	{
-		std::pair<ActiveTimerSet::iterator, bool> result = m_setActiveTimer.insert(ActiveTimer(timer,timer->Sequence()));
+		std::pair<ActiveTimerSet::iterator, bool> result = m_setActiveTimer.insert(ActiveTimer(timer, timer->Sequence()));
 		assert(result.second);
 	}
 
@@ -143,4 +143,76 @@ void TimerQueue::cancelInLoop(TimerId timerId)
 		m_cancelingTimer.insert(timer);
 	}
 	assert(m_setTimer.size() == m_setActiveTimer.size());
+}
+
+void TimerQueue::handleRead()
+{
+	//m_pLoop->AssertInLoopThread();
+	Timestamp now(Timestamp::Now());
+	std::vector<TimerEntry> vecExpired = getExpired(now);
+	m_callingExpiredTimer = true;
+	m_cancelingTimer.clear();
+
+	for (std::vector<TimerEntry>::iterator it = vecExpired.begin();
+	        it != vecExpired.end(); ++it)
+	{
+		it->second->Run();
+	}
+	m_callingExpiredTimer = true;
+
+	reset(vecExpired, now);
+
+}
+
+
+std::vector<TimerQueue::TimerEntry> TimerQueue::getExpired(Timestamp now)
+{
+	assert(m_setTimer.size() == m_setActiveTimer.size());
+	std::vector<TimerEntry> vecExpired;
+	TimerEntry sentry(now, reinterpret_cast<TimerEx*>(UINTPTR_MAX));
+	TimerSet::iterator end = m_setTimer.lower_bound(sentry);
+	assert(end == m_setTimer.end() || now < end->first);
+	std::copy(m_setTimer.begin(), end, back_inserter(vecExpired));
+	m_setTimer.erase(m_setTimer.begin(), end);
+
+	for(std::vector<TimerEntry>::iterator it = vecExpired.begin();
+	        it != vecExpired.end(); ++it)
+	{
+		ActiveTimer timer(it->second, it->second->Sequence());
+		size_t n = m_cancelingTimer.erase(timer);
+		assert(n == 1);
+	}
+
+	assert(m_setTimer.size() == m_setActiveTimer.size());
+	return vecExpired;
+}
+
+
+void TimerQueue::reset(const std::vector<TimerEntry>& expired, Timestamp now)
+{
+	Timestamp nextExpire;
+	for (std::vector<TimerEntry>::const_iterator it = expired.begin();
+	        it != expired.end(); ++it)
+	{
+		ActiveTimer timer(it->second, it->second->Sequence());
+		if (it->second->Repeat() && m_cancelingTimer.find(timer) == m_cancelingTimer.end())
+		{
+			it->second->Restart(now);
+			insert(it->second);
+		}
+		else
+		{
+			delete it->second;
+		}
+	}
+
+	if(!m_setTimer.empty())
+	{
+		nextExpire = m_setTimer.begin()->second->Expiration();
+	}
+
+	if(nextExpire.Valid())
+	{
+		resetTimerfd(m_timerFd,nextExpire);
+	}
 }
