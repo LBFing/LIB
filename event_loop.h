@@ -18,7 +18,7 @@ public:
 	typedef std::function<void()> Functor;
 	EventLoop();
 	~EventLoop();
-	
+
 	void Loop();
 	void Quit();
 	Timestamp PollRetrunTime() const { return m_pollReturnTime;}
@@ -31,13 +31,49 @@ public:
 
 	size_t QueueSize() const;
 
+	TimerId RunAt(const Timestamp& time,const TimerCallback& cb);
+
+	TimerId RunAfter(double delay,const TimerCallback& cb);
+
+	TimerId RunEvery(double interval,const TimerCallback& cb);
+
+	void Cancel(TimerId timerId);
+
+	void Wakeup();
+
+	void UpdateChannel(Channel* channel);
+
+	void RemoveChannel(Channel* channel);
+
+	void HasChannel(Channel* channel);
+
+	void AssertInLoopThread()
+	{
+		if(!IsInLoopThread())
+		{
+			abortNotInLoopThread();
+		}
+	}
+
+	bool IsInLoopThread() const { return m_threadId == CurrentThread::Tid();}
+
+	bool EventHandling() const { return m_eventHanding;}
+
+	void SetContext(const any& context) {m_context = context;}
+
+	const any& GetContext() {return m_context;}
+
+	any* GetMutableContext() {return &m_context;}
+
+	static EventLoop* GetEventLoopOfCurrentThread();
+
 
 private:
 	void abortNotInLoopThread();
 	void handleRead();
 	void doPendingFunctor();
 	void printActiveChannel() const; //DEBUG
-	
+
 	typedef std::vector<Channel*> vecChannel;
 	bool m_looping;
 	bool m_quit;
