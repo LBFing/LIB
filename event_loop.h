@@ -8,8 +8,9 @@
 #include "mutex.h"
 #include "any.h"
 
-class Channel;
+
 class Poller;
+class Channel;
 class TimerQueue;
 
 class EventLoop : private Nocopyable

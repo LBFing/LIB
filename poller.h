@@ -28,7 +28,7 @@ public:
 
 	virtual bool HasChannel(Channel* channel) const;
 
-	static Poller* NewDefaultPoller(EventLoop* loop);
+	static Poller* NewDefaultPoller(EventLoop* loop); //´ýÊµÏÖ
 
 	void AssertInLoopThread() const
 	{

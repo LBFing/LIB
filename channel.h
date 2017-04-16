@@ -1,5 +1,5 @@
-#ifndef __EVENT_LOOOP_H__
-#define __EVENT_LOOOP_H__
+#ifndef __CHANNEL_H__
+#define __CHANNEL_H__
 
 #include "type_define.h"
 #include "nocopyable.h"

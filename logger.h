@@ -31,6 +31,8 @@ public:
 
 	void setLevel(const char *level);
 	void setLogFileName(const std::string& name) { _filename = name; }
+
+	static LoggerLevel getLoggerLevel() {return _level;}
 private:
 	void log(const char *msg, LoggerLevel level);
 	void writeLogToConsole(const char *msg, LoggerLevel level);
