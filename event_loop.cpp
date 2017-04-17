@@ -136,3 +136,99 @@ TimerId EventLoop::RunAt(const Timestamp& time, const TimerCallback& cb)
 {
 	return m_timerQueue->AddTimer(cb, time, 0.0);
 }
+
+TimerId EventLoop::RunAfter(double delay, const TimerCallback& cb)
+{
+	Timestamp time(addTime(Timestamp::Now(), delay));
+	return RunAt(time, cb);
+}
+
+TimerId EventLoop::RunEvery(double interval, const TimerCallback& cb)
+{
+	Timestamp time(addTime(Timestamp::Now(), interval));
+	return m_timerQueue->AddTimer(cb, time, interval);
+}
+
+void EventLoop::Cancel(TimerId timerId)
+{
+	return m_timerQueue->Cancel(timerId);
+}
+
+void EventLoop::UpdateChannel(Channel* channel)
+{
+	assert(channel->OwnerLoop() == this);
+	AssertInLoopThread();
+	m_poller->UpdateChannel(channel);
+}
+
+void EventLoop::RemoveChannel(Channel* channel)
+{
+	assert(channel->OwnerLoop() == this);
+	AssertInLoopThread();
+	if (m_eventHanding)
+	{
+		assert(m_currentActiveChannel == channel ||
+		       std::find(m_vecActiveChannel.begin(), m_vecActiveChannel.end(), channel) == m_vecActiveChannel.end());
+	}
+	m_poller->RemoveChannel(channel);
+}
+
+bool EventLoop::HasChannel(Channel* channel)
+{
+	assert(channel->OwnerLoop() == this);
+	AssertInLoopThread();
+	return m_poller->HasChannel(channel);
+}
+
+void EventLoop::abortNotInLoopThread()
+{
+	ERROR("EventLoop::abortNotInLoopThread - EventLoop %p was created in threadId :%d current thread id :%d", this, m_threadId, CurrentThread::Tid());
+}
+
+void EventLoop::Wakeup()
+{
+	int64 one = 1;
+	ssize_t n = ::write(m_wakeupFd, &one, sizeof(one));
+	if (n != sizeof(one))
+	{
+		ERROR("EventLoop::wakeup() writes :%d bytes instead of 8", n);
+	}
+}
+
+
+void EventLoop::handleRead()
+{
+	int64 one = 1;
+	ssize_t n = ::read(m_wakeupFd, &one, sizeof(one));
+	if (n != sizeof(one))
+	{
+		ERROR("EventLoop::wakeup() writes :%d bytes instead of 8", n);
+	}
+}
+
+void EventLoop::doPendingFunctor()
+{
+	std::vector<Functor> functors;
+	m_callPendingFunctor = true;
+	{
+		MutexLockGuard lock(m_mutex);
+		functors.swap(m_pendingFunctor);
+	}
+
+	for (size_t i = 0; i < functors.size(); ++i)
+	{
+		functors[i]();
+	}
+	m_callPendingFunctor = false;
+}
+
+void EventLoop::printActiveChannel() const
+{
+	for (vecChannel::const_iterator it = m_vecActiveChannel.begin();
+	        it != m_vecActiveChannel.end(); ++it)
+	{
+		const Channel* ch = *it;
+		DEBUG ("{ %s}", ch->RevertsToString());
+	}
+}
+

@@ -32,11 +32,11 @@ public:
 
 	size_t QueueSize() const;
 
-	TimerId RunAt(const Timestamp& time,const TimerCallback& cb);
+	TimerId RunAt(const Timestamp& time, const TimerCallback& cb);
 
-	TimerId RunAfter(double delay,const TimerCallback& cb);
+	TimerId RunAfter(double delay, const TimerCallback& cb);
 
-	TimerId RunEvery(double interval,const TimerCallback& cb);
+	TimerId RunEvery(double interval, const TimerCallback& cb);
 
 	void Cancel(TimerId timerId);
 
@@ -46,7 +46,7 @@ public:
 
 	void RemoveChannel(Channel* channel);
 
-	void HasChannel(Channel* channel);
+	bool HasChannel(Channel* channel);
 
 	void AssertInLoopThread()
 	{
