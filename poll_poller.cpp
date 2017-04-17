@@ -51,7 +51,7 @@ void PollPoller::UpdateChannel(Channel* channel)
 		int32 idx = static_cast<int32>(m_vecPollFd.size() - 1);
 		channel->SetInex(idx);
 		m_mapChannel[pfd.fd] = channel;
-		assert(pfd.fd == channel->fd() || pfd.fd == -channel->fd() - 1);
+		assert(pfd.fd == channel->GetFd() || pfd.fd == -channel->GetFd() - 1);
 	}
 	else
 	{
@@ -60,7 +60,7 @@ void PollPoller::UpdateChannel(Channel* channel)
 		int32 idx = channel->Index();
 		assert(0 <= idx && idx < static_cast<int32>(m_vecPollFd.size()));
 		struct pollfd& pfd = m_vecPollFd[idx];
-		pfd.events = static_cast<short>(channel->events());
+		pfd.events = static_cast<short>(channel->GetEvents());
 		pfd.revents = 0;
 		if (channel->IsNoneEvent())
 		{
@@ -84,7 +84,7 @@ void PollPoller::RemoveChannel(Channel* channel)
 	assert(pfd.fd == -channel->GetFd() - 1 && pfd.events == channel->GetEvents());
 	size_t n = m_mapChannel.erase(channel->GetFd());
 	assert(n == 1);
-	if (implicit_cast<size_t>(idx) == m_vecPollFd.size() - 1)
+	if (static_cast<size_t>(idx) == m_vecPollFd.size() - 1)
 	{
 		m_vecPollFd.pop_back();
 	}

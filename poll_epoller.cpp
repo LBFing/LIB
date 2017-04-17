@@ -28,14 +28,14 @@ EPollPoller::~EPollPoller()
 Timestamp EPollPoller::Poll(int32 timeOuts, ChannelVec* activeChannels)
 {
 	DEBUG("fd total count :%ld", m_mapChannel.size());
-	int32 numEvents = ::epoll_wait(m_epollfd, &*m_vecEvent.begin(), static_cast<int32>(m_vecEvent, size()), timeOuts);
+	int32 numEvents = ::epoll_wait(m_epollfd, &*m_vecEvent.begin(), static_cast<int32>(m_vecEvent.size()), timeOuts);
 	int32 saveErrno = errno;
 	Timestamp now(Timestamp::Now());
 	if (numEvents > 0)
 	{
 		DEBUG("%d events happended", numEvents);
 		fillActiveChannels(numEvents, activeChannels);
-		if (implicit_cast<size_t>(numEvents) == m_vecEvent.size())
+		if (static_cast<size_t>(numEvents) == m_vecEvent.size())
 		{
 			m_vecEvent.reserve(m_vecEvent.size() * 2);
 		}
@@ -133,7 +133,7 @@ const char* EPollPoller::operationToString(int32 op)
 
 void EPollPoller::fillActiveChannels(int numEvents, ChannelVec* activeChannels) const
 {
-	assert(implicit_cast<size_t>(numEvents) <= m_vecEvent.size());
+	assert(static_cast<size_t>(numEvents) <= m_vecEvent.size());
 	for (int32 i = 0; i < numEvents; ++i)
 	{
 		Channel* channel = static_cast<Channel*>(m_vecEvent[i].data.ptr);
@@ -155,7 +155,7 @@ void EPollPoller::update(int operation, Channel* channel)
 	event.events = channel->GetEvents();
 	event.data.ptr = channel;
 	int fd = channel->GetFd();
-	DEBUG("epoll_ctl op = %s fd = %d,event = { %s }", operationToString(operation), fd, fd, channel->EventsToString().c_str());
+	DEBUG("epoll_ctl op = %s fd = %d event = { %s }", operationToString(operation), fd, channel->EventsToString().c_str());
 	if (::epoll_ctl(m_epollfd, operation, fd, &event) < 0)
 	{
 		ERROR("epoll_ctl op = %s fd = %d", operationToString(operation), fd);
