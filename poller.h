@@ -32,7 +32,7 @@ public:
 
 	void AssertInLoopThread() const
 	{
-		//m_ownerLoop->AsserrtInLoopThread();
+		m_ownerLoop->AssertInLoopThread();
 	}
 protected:
 	typedef std::map<int32, Channel*> ChannelMap;

@@ -78,19 +78,19 @@ TimerQueue::~TimerQueue()
 TimerId TimerQueue::AddTimer(const TimerCallback& cb, Timestamp when, double interval)
 {
 	TimerEx* timer = new TimerEx(cb, when, interval);
-	//m_pLoop->RunInLoop(std::bind(&TImerQueue::addTimerInLoop,this,timer));
+	m_pLoop->RunInLoop(std::bind(&TimerQueue::addTimerInLoop, this, timer));
 	return TimerId(timer, timer->Sequence());
 }
 
 void TimerQueue::Cancel(TimerId timerId)
 {
-	//m_pLoop->RunInLoop(std::bind(&TimerQueue::cancleInLoop,this,timerId));
+	m_pLoop->RunInLoop(std::bind(&TimerQueue::cancelInLoop, this, timerId));
 }
 
 
 bool TimerQueue::insert(TimerEx* timer)
 {
-	//m_pLoop->AssertInLoopThread();
+	m_pLoop->AssertInLoopThread();
 	assert(m_setTimer.size() == m_setActiveTimer.size());
 	bool earliestChanged = false;
 	Timestamp when = timer->Expiration();
@@ -117,7 +117,7 @@ bool TimerQueue::insert(TimerEx* timer)
 
 void TimerQueue::addTimerInLoop(TimerEx* timer)
 {
-	//m_pLoop->AssertInLoopThread();
+	m_pLoop->AssertInLoopThread();
 	bool earliestChanged = insert(timer);
 	if(earliestChanged)
 	{
@@ -127,7 +127,7 @@ void TimerQueue::addTimerInLoop(TimerEx* timer)
 
 void TimerQueue::cancelInLoop(TimerId timerId)
 {
-	//m_pLoop->AssertInLoopThread();
+	m_pLoop->AssertInLoopThread();
 	assert(m_setTimer.size() == m_setActiveTimer.size());
 	ActiveTimer timer(timerId.m_timer, timerId.m_sequence);
 	ActiveTimerSet::iterator it = m_setActiveTimer.find(timer);
@@ -147,7 +147,7 @@ void TimerQueue::cancelInLoop(TimerId timerId)
 
 void TimerQueue::handleRead()
 {
-	//m_pLoop->AssertInLoopThread();
+	m_pLoop->AssertInLoopThread();
 	Timestamp now(Timestamp::Now());
 	std::vector<TimerEntry> vecExpired = getExpired(now);
 	m_callingExpiredTimer = true;
@@ -213,6 +213,6 @@ void TimerQueue::reset(const std::vector<TimerEntry>& expired, Timestamp now)
 
 	if(nextExpire.Valid())
 	{
-		resetTimerfd(m_timerFd,nextExpire);
+		resetTimerfd(m_timerFd, nextExpire);
 	}
 }

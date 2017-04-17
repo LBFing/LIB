@@ -183,6 +183,7 @@ bool EventLoop::HasChannel(Channel* channel)
 void EventLoop::abortNotInLoopThread()
 {
 	ERROR("EventLoop::abortNotInLoopThread - EventLoop %p was created in threadId :%d current thread id :%d", this, m_threadId, CurrentThread::Tid());
+	abort();
 }
 
 void EventLoop::Wakeup()

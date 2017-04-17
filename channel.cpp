@@ -22,10 +22,10 @@ Channel::~Channel()
 {
 	assert(!m_eventHandling);
 	assert(!m_addedToLoop);
-	//if(m_pLoop->IsInLoopThread())
-	//{
-	//	assert(!m_pLoop->HasChannel(this));
-	//}
+	if(m_pLoop->IsInLoopThread())
+	{
+		assert(!m_pLoop->HasChannel(this));
+	}
 }
 
 void Channel::Tie(const std::shared_ptr<void>& obj)
@@ -37,14 +37,14 @@ void Channel::Tie(const std::shared_ptr<void>& obj)
 void Channel::update()
 {
 	m_addedToLoop = true;
-	//m_pLoop->UpdateChannel(this);
+	m_pLoop->UpdateChannel(this);
 }
 
 void Channel::Remove()
 {
 	assert(IsNoneEvent());
 	m_addedToLoop = false;
-	//m_pLoop->RemoveChannel();
+	m_pLoop->RemoveChannel();
 }
 
 
