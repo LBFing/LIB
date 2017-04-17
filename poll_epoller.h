@@ -16,7 +16,7 @@ public:
 private:
 	static const int kInitEventListSize = 16;
 
-	static const char* operationToString(int op);
+	static const char* operationToString(int32 op);
 
 	void fillActiveChannels(int numEvents, ChannelVec* activeChannels) const;
 	void update(int operation, Channel* channel);
