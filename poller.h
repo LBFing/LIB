@@ -2,6 +2,7 @@
 #define __POLLER_H__
 
 #include "timer.h"
+#include "event_loop.h"
 #include "nocopyable.h"
 
 class Channel;

@@ -192,7 +192,7 @@ void EventLoop::Wakeup()
 	ssize_t n = ::write(m_wakeupFd, &one, sizeof(one));
 	if (n != sizeof(one))
 	{
-		ERROR("EventLoop::wakeup() writes :%d bytes instead of 8", n);
+		ERROR("EventLoop::wakeup() writes :%ld bytes instead of 8", n);
 	}
 }
 
@@ -203,7 +203,7 @@ void EventLoop::handleRead()
 	ssize_t n = ::read(m_wakeupFd, &one, sizeof(one));
 	if (n != sizeof(one))
 	{
-		ERROR("EventLoop::wakeup() writes :%d bytes instead of 8", n);
+		ERROR("EventLoop::wakeup() writes :%ld bytes instead of 8", n);
 	}
 }
 
@@ -229,7 +229,7 @@ void EventLoop::printActiveChannel() const
 	        it != m_vecActiveChannel.end(); ++it)
 	{
 		const Channel* ch = *it;
-		DEBUG ("{ %s}", ch->RevertsToString());
+		DEBUG ("{%s}", ch->RevertsToString().c_str());
 	}
 }
 

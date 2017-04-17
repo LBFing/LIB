@@ -198,7 +198,7 @@ inline double TimeDiff(Timestamp& high, Timestamp& low)
 	return static_cast<double>(diff) / Timestamp::kMicroSecondsPerSecond;
 }
 
-inline Timestamp addTime(Timestamp& timestamp, double seconds)
+inline Timestamp addTime(Timestamp timestamp, double seconds)
 {
 	int64 delta = static_cast<int64>(seconds * Timestamp::kMicroSecondsPerSecond);
 	return Timestamp(timestamp.GetMicroSeconds() + delta);

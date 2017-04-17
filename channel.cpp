@@ -1,5 +1,6 @@
 #include "channel.h"
 #include "logger.h"
+#include "event_loop.h"
 
 const int32 Channel::kNoneEvent = 0;
 const int32 Channel::kReadEvent = POLLIN | POLLPRI;
@@ -44,7 +45,7 @@ void Channel::Remove()
 {
 	assert(IsNoneEvent());
 	m_addedToLoop = false;
-	m_pLoop->RemoveChannel();
+	m_pLoop->RemoveChannel(this);
 }
 
 
