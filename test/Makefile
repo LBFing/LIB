@@ -36,7 +36,8 @@ PROGRAM = 	buffer_ex_test \
 		  	blocking_queue_test \
 		  	logger_test \
 			thread_test \
-			threadpool_test
+			threadpool_test \
+			timer_queue_test
 
 
 
@@ -97,6 +98,9 @@ thread_test:thread_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 
 threadpool_test:threadpool_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+timer_queue_test:timer_queue_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 
 .PHONY:clean
