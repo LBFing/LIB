@@ -21,8 +21,9 @@ __thread bool	g_log_type;
 
 Logger& SetLoggerHead(Logger& logger, const char *filename, const uint32 line)
 {
-	strncpy(g_log_file_name, filename, sizeof(g_log_file_name));
-	g_log_file_name[strlen(filename)] = '\0';
+	const char* file = strrchr(filename,'/') ? strrchr(filename,'/')+1 : filename;
+	strncpy(g_log_file_name, file, sizeof(g_log_file_name));
+	g_log_file_name[strlen(file)] = '\0';
 	g_log_line = line;
 	g_log_type = LogType_One;
 	return logger;

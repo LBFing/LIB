@@ -1,33 +1,58 @@
-#include "tinyxml2.h"
-#include "type_define.h"
-using namespace tinyxml2;
+#include "event_loop.h"
+#include "event_loop_thread.h"
+#include "thread.h"
+#include "logger.h"
 
-void TestXMLParse()
+
+int cnt = 0;
+EventLoop* g_loop;
+
+void printTid()
 {
-	XMLDocument doc;
-	doc.LoadFile("../config/test.xml");
-	XMLElement* scene = doc.RootElement();
-	XMLElement* surface = scene->FirstChildElement("node");
-	while (surface)
+	printf("pid = %d, tid = %d\n", getpid(), CurrentThread::Tid());
+	printf("now %s\n", Timestamp::Now().ToString().c_str());
+}
+
+void print(const char* msg)
+{
+	printf("msg %s %s\n", Timestamp::Now().ToString().c_str(), msg);
+	if (++cnt == 20)
 	{
-		XMLElement* surfaceChild = surface->FirstChildElement();
-		const char* content;
-		const char* name ;
-		const XMLAttribute* attributeOfSurface = surface->FirstAttribute();
-		cout << attributeOfSurface->Name() << ":" << attributeOfSurface->Value() << endl;
-		while (surfaceChild)
-		{
-			name = surfaceChild->Name();
-			content = surfaceChild->GetText();
-			surfaceChild = surfaceChild->NextSiblingElement();
-			cout << name << ":" << content << endl;
-		}
-		surface = surface->NextSiblingElement();
+		g_loop->Quit();
 	}
 }
 
-int main(int argc, char const* argv[])
+void cancel(TimerId timer)
 {
-	TestXMLParse();
+	g_loop->Cancel(timer);
+	printf("cancelled at %s\n", Timestamp::Now().ToString().c_str());
+}
+
+int main()
+{
+	InitLogger("/root/study/LIB/log/test.log", "DEBUG");
+	printTid();
+	sleep(1);
+	{
+		EventLoop loop;
+		g_loop = &loop;
+
+		print("main");
+		loop.RunAfter(1, std::bind(print, "once1"));
+		loop.RunAfter(1.5, std::bind(print, "once1.5"));
+		loop.RunAfter(2.5, std::bind(print, "once2.5"));
+		loop.RunAfter(3.5, std::bind(print, "once3.5"));
+		TimerId t45 = loop.RunAfter(4.5, std::bind(print, "once4.5"));
+		loop.RunAfter(4.2, std::bind(cancel, t45));
+		loop.RunAfter(4.8, std::bind(cancel, t45));
+		loop.RunEvery(2, std::bind(print, "every2"));
+		TimerId t3 = loop.RunEvery(3, std::bind(print, "every3"));
+		loop.RunAfter(9.001, std::bind(cancel, t3));
+
+		loop.Loop();
+		print("main loop exits");
+	}
+
+
 	return 0;
 }
