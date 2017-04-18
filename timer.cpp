@@ -51,17 +51,10 @@ uint64 Time::Elapse(const Time& rt) const
 int32 Time::Format(char* buffer, size_t bufferlen, const char* format)
 {
 	struct tm tm_data;
-	time_t sec = (time_t) Sec();
+	time_t sec = (time_t)Sec();
 	localtime_r(&sec, &tm_data);
-	int32 len = snprintf(buffer, bufferlen, format,
-	                     tm_data.tm_year + 1900,
-	                     tm_data.tm_mon + 1,
-	                     tm_data.tm_mday,
-	                     tm_data.tm_hour,
-	                     tm_data.tm_min,
-	                     tm_data.tm_sec);
-	return len;
-
+	strftime(buffer, bufferlen, format, &tm_data); //format date and time. 
+	return 0;
 }
 //=====================================================================
 

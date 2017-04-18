@@ -56,7 +56,7 @@ public:
 	uint64 Usec() const;
 	uint32  LeftUsec() const;
 	uint64 Elapse(const Time& rt) const;
-	int32 Format(char* buffer, size_t bufferlen, const char* format = "%4d%02d%02d %02d:%02d:%02d");
+	int32 Format(char* buffer, size_t bufferlen, const char* format = "%Y-%m-%d %T");
 private:
 	friend class Clocker;
 	struct timespec m_ts;

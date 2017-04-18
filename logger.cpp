@@ -128,7 +128,7 @@ void Logger::log(const char *msg, LoggerLevel level)
 
 	_time.Now();
 	char tbuf[64]  = {0};
-	_time.Format(tbuf, 64, "%y%m%d-%T");
+	_time.Format(tbuf, 64);
 	char lbuf[MSGBUF_MAX + 64];
 	std::string head_str;
 	FetchLoggerHead(head_str);
@@ -158,7 +158,7 @@ void Logger::log(const char *msg, LoggerLevel level)
 		default: break;
 	}
 
-	snprintf(lbuf, MSGBUF_MAX + 64, "%s %s %s:%s ==>%s", tbuf, _logname.c_str(), strLevel.c_str(), head_str.c_str(), msg);
+	snprintf(lbuf, MSGBUF_MAX + 64, "%s [%s]:[%s]==>%s", tbuf, strLevel.c_str(), head_str.c_str(), msg);
 	_mutex.Lock();
 	if(_need_console)
 	{
@@ -218,9 +218,9 @@ void Logger::writeLogToFile(const char *msg)
 		}
 
 		_ofile = new std::ofstream;
-		char buf[50];
-		_time.Format(buf, 50, ".%y%m%d-%H");
-		std::string of = _filename + std::string(buf);
+		char buf[64];
+		_time.Format(buf, 64,"%Y%m%d-%H");
+		std::string of = _filename +"."+ std::string(buf);
 		_ofile->open(of.c_str(), std::ios::out | std::ios::app);
 		if(!(*_ofile))
 		{
