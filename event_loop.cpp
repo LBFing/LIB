@@ -3,7 +3,7 @@
 #include "timer_queue.h"
 #include "logger.h"
 
-__thread EventLoop* t_loopInThisThread = 0;
+__thread EventLoop* t_loopInThisThread = NULL;
 const int kPollTimeMs = 10000;
 
 
