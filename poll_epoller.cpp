@@ -17,7 +17,7 @@ const int kDeleted = 2;
 
 EPollPoller::EPollPoller(EventLoop* loop) : Poller(loop), m_epollfd(::epoll_create1(EPOLL_CLOEXEC)), m_vecEvent(kInitEventListSize)
 {
-
+	INFO("EPollPoller Fd:%d",m_epollfd);
 }
 
 EPollPoller::~EPollPoller()

@@ -10,6 +10,7 @@ const int kPollTimeMs = 10000;
 int createEventfd()
 {
 	int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+	INFO("createEventfd %d",evtfd);
 	if (evtfd < 0)
 	{
 		ERROR("Failed in eventfd");
