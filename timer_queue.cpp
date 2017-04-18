@@ -181,7 +181,7 @@ std::vector<TimerQueue::TimerEntry> TimerQueue::getExpired(Timestamp now)
 	        it != vecExpired.end(); ++it)
 	{
 		ActiveTimer timer(it->second, it->second->Sequence());
-		size_t n = m_cancelingTimer.erase(timer);
+		size_t n = m_setActiveTimer.erase(timer);
 		assert(n == 1);
 	}
 
