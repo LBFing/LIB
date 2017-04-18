@@ -14,16 +14,16 @@ public:
 	virtual void RemoveChannel(Channel* channel);
 
 private:
-	static const int kInitEventListSize = 16;
+	static const int32 kInitEventListSize = 16;
 
 	static const char* operationToString(int32 op);
 
-	void fillActiveChannels(int numEvents, ChannelVec* activeChannels) const;
-	void update(int operation, Channel* channel);
+	void fillActiveChannels(int32 numEvents, ChannelVec* activeChannels) const;
+	void update(int32 operation, Channel* channel);
 
 	typedef std::vector<struct epoll_event> EventVec;
 
-	int m_epollfd;
+	int32 m_epollfd;
 	EventVec m_vecEvent;
 
 };

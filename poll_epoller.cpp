@@ -10,9 +10,9 @@ STATIC_ASSERT_CHECK(EPOLLRDHUP == POLLRDHUP);
 STATIC_ASSERT_CHECK(EPOLLERR == POLLERR);
 STATIC_ASSERT_CHECK(EPOLLHUP == POLLHUP);
 
-const int kNew = -1;
-const int kAdded = 1;
-const int kDeleted = 2;
+const int32 kNew = -1;
+const int32 kAdded = 1;
+const int32 kDeleted = 2;
 
 
 EPollPoller::EPollPoller(EventLoop* loop) : Poller(loop), m_epollfd(::epoll_create1(EPOLL_CLOEXEC)), m_vecEvent(kInitEventListSize)
@@ -97,12 +97,12 @@ void EPollPoller::UpdateChannel(Channel* channel)
 void EPollPoller::RemoveChannel(Channel* channel)
 {
 	Poller::AssertInLoopThread();
-	int fd = channel->GetFd();
+	int32 fd = channel->GetFd();
 	DEBUG("fd = %d", fd);
 	assert(m_mapChannel.find(fd) != m_mapChannel.end());
 	assert(m_mapChannel[fd] == channel);
 	assert(channel->IsNoneEvent());
-	int index = channel->Index();
+	int32 index = channel->Index();
 	assert(index == kAdded || index == kDeleted);
 	size_t n = m_mapChannel.erase(fd);
 	assert(n == 1);
@@ -131,7 +131,7 @@ const char* EPollPoller::operationToString(int32 op)
 	}
 }
 
-void EPollPoller::fillActiveChannels(int numEvents, ChannelVec* activeChannels) const
+void EPollPoller::fillActiveChannels(int32 numEvents, ChannelVec* activeChannels) const
 {
 	assert(static_cast<size_t>(numEvents) <= m_vecEvent.size());
 	for (int32 i = 0; i < numEvents; ++i)
@@ -148,7 +148,7 @@ void EPollPoller::fillActiveChannels(int numEvents, ChannelVec* activeChannels) 
 	}
 }
 
-void EPollPoller::update(int operation, Channel* channel)
+void EPollPoller::update(int32 operation, Channel* channel)
 {
 	struct epoll_event event;
 	bzero(&event, sizeof(event));
