@@ -161,7 +161,7 @@ void TimerQueue::handleRead()
 	{
 		it->second->Run();
 	}
-	m_callingExpiredTimer = true;
+	m_callingExpiredTimer = false;
 
 	reset(vecExpired, now);
 
