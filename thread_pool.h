@@ -5,7 +5,6 @@
 #include "mutex.h"
 #include "condition.h"
 #include "thread.h"
-#include "ptr_vector.h"
 
 class ThreadPool : private Nocopyable
 {
@@ -45,7 +44,7 @@ private:
 	Condition m_notFull;
 	string m_strName;
 	Task m_threadInitCallBack;
-	ptr_vector<Thread> m_threads;
+	std::vector<Thread*> m_threads;
 	std::deque<Task> m_queue;
 	size_t m_maxQueueSize;
 	bool m_running;

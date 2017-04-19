@@ -27,8 +27,17 @@ void ThreadPool::Start(int32 numThreads)
 	{
 		char id[32] = {0};
 		snprintf(id, sizeof(id), "%d", i + 1);
-		m_threads.push_back(new Thread(std::bind(&ThreadPool::runInThread, this), m_strName + id));
-		m_threads[i]->Start();
+		Thread* pThread = new Thread(std::bind(&ThreadPool::runInThread, this), m_strName + id);
+		if (pThread)
+		{
+			m_threads.push_back(pThread);
+			m_threads[i]->Start();
+		}
+		else
+		{
+			fprintf(stderr, "ThreadPool Start failed\n");
+			abort();
+		}
 	}
 	if (numThreads == 0 && m_threadInitCallBack)
 	{
@@ -44,7 +53,7 @@ void ThreadPool::Stop()
 		m_notEmpty.NotifyAll();
 	}
 
-	for(ptr_vector::iterator it = m_threads.begin(); it != m_threads.end(); ++it)
+	for(std::vector<Thread*>::iterator it = m_threads.begin(); it != m_threads.end(); ++it)
 	{
 		if(*it)
 		{
