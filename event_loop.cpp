@@ -110,6 +110,7 @@ void EventLoop::RunInLoop(const Functor& cb)
 	}
 	else
 	{
+		WARN("EventLoop QueueInLoop");
 		QueueInLoop(cb);
 	}
 }
@@ -195,6 +196,7 @@ void EventLoop::Wakeup()
 	{
 		ERROR("EventLoop::wakeup() writes :%ld bytes instead of 8", n);
 	}
+	WARN("EventLoop Wakeup");
 }
 
 
@@ -206,6 +208,8 @@ void EventLoop::handleRead()
 	{
 		ERROR("EventLoop::wakeup() writes :%ld bytes instead of 8", n);
 	}
+
+	WARN("EventLoop handleRead");
 }
 
 void EventLoop::doPendingFunctor()

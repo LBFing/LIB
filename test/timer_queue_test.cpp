@@ -30,7 +30,7 @@ void cancel(TimerId timer)
 
 int main()
 {
-	InitLogger("/root/study/LIB/log/test.log", "DEBUG");
+	InitLogger("/root/study/LIB/log/test.log", "error");
 	printTid();
 	sleep(1);
 	{
@@ -51,6 +51,15 @@ int main()
 
 		loop.Loop();
 		print("main loop exits");
+	}
+
+	sleep(1);
+	{
+		EventLoopThread loopThread;
+		EventLoop* loop = loopThread.StartLoop();
+		loop->RunAfter(2, printTid);
+		sleep(3);
+		print("thread loop exits");
 	}
 
 
