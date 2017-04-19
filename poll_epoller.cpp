@@ -17,7 +17,7 @@ const int32 kDeleted = 2;
 
 EPollPoller::EPollPoller(EventLoop* loop) : Poller(loop), m_epollfd(::epoll_create1(EPOLL_CLOEXEC)), m_vecEvent(kInitEventListSize)
 {
-	INFO("EPollPoller Fd:%d",m_epollfd);
+	//INFO("EPollPoller Fd:%d",m_epollfd);
 }
 
 EPollPoller::~EPollPoller()
@@ -27,13 +27,13 @@ EPollPoller::~EPollPoller()
 
 Timestamp EPollPoller::Poll(int32 timeOuts, ChannelVec* activeChannels)
 {
-	DEBUG("fd total count :%ld", m_mapChannel.size());
+	//DEBUG("fd total count :%ld", m_mapChannel.size());
 	int32 numEvents = ::epoll_wait(m_epollfd, &*m_vecEvent.begin(), static_cast<int32>(m_vecEvent.size()), timeOuts);
 	int32 saveErrno = errno;
 	Timestamp now(Timestamp::Now());
 	if (numEvents > 0)
 	{
-		DEBUG("%d events happended", numEvents);
+		//DEBUG("%d events happended", numEvents);
 		fillActiveChannels(numEvents, activeChannels);
 		if (static_cast<size_t>(numEvents) == m_vecEvent.size())
 		{
@@ -59,7 +59,7 @@ void EPollPoller::UpdateChannel(Channel* channel)
 {
 	Poller::AssertInLoopThread();
 	const int32 index = channel->Index();
-	DEBUG("fd = %d events = %d index = %d", channel->GetFd(), channel->GetEvents(), index);
+	//DEBUG("fd = %d events = %d index = %d", channel->GetFd(), channel->GetEvents(), index);
 	if (index == kNew || index == kDeleted)
 	{
 		int32 fd = channel->GetFd();
@@ -98,7 +98,7 @@ void EPollPoller::RemoveChannel(Channel* channel)
 {
 	Poller::AssertInLoopThread();
 	int32 fd = channel->GetFd();
-	DEBUG("fd = %d", fd);
+	//DEBUG("fd = %d", fd);
 	assert(m_mapChannel.find(fd) != m_mapChannel.end());
 	assert(m_mapChannel[fd] == channel);
 	assert(channel->IsNoneEvent());
@@ -155,7 +155,7 @@ void EPollPoller::update(int32 operation, Channel* channel)
 	event.events = channel->GetEvents();
 	event.data.ptr = channel;
 	int fd = channel->GetFd();
-	DEBUG("epoll_ctl op = %s fd = %d event = { %s }", operationToString(operation), fd, channel->EventsToString().c_str());
+	//DEBUG("epoll_ctl op = %s fd = %d event = { %s }", operationToString(operation), fd, channel->EventsToString().c_str());
 	if (::epoll_ctl(m_epollfd, operation, fd, &event) < 0)
 	{
 		ERROR("epoll_ctl op = %s fd = %d", operationToString(operation), fd);

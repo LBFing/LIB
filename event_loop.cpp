@@ -10,7 +10,7 @@ const int kPollTimeMs = 10000;
 int createEventfd()
 {
 	int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
-	INFO("createEventfd %d", evtfd);
+	//INFO("createEventfd %d", evtfd);
 	if (evtfd < 0)
 	{
 		ERROR("Failed in eventfd");
@@ -41,6 +41,7 @@ EventLoop::EventLoop()
 	if(t_loopInThisThread)
 	{
 		ERROR("Another EventLoop %p exists in this thread :%d ", this, m_threadId);
+		abort();
 	}
 	else
 	{
@@ -110,7 +111,7 @@ void EventLoop::RunInLoop(const Functor& cb)
 	}
 	else
 	{
-		WARN("EventLoop QueueInLoop");
+		//WARN("EventLoop QueueInLoop");
 		QueueInLoop(cb);
 	}
 }
@@ -196,7 +197,7 @@ void EventLoop::Wakeup()
 	{
 		ERROR("EventLoop::wakeup() writes :%ld bytes instead of 8", n);
 	}
-	WARN("EventLoop Wakeup");
+	//WARN("EventLoop Wakeup");
 }
 
 
@@ -208,8 +209,7 @@ void EventLoop::handleRead()
 	{
 		ERROR("EventLoop::wakeup() writes :%ld bytes instead of 8", n);
 	}
-
-	WARN("EventLoop handleRead");
+	//WARN("EventLoop handleRead");
 }
 
 void EventLoop::doPendingFunctor()

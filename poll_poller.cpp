@@ -17,7 +17,7 @@ Timestamp PollPoller::Poll(int32 timeOuts, ChannelVec* activeChannels)
 	Timestamp now(Timestamp::Now());
 	if (numEvevnts > 0)
 	{
-		DEBUG("Poll %d events happend", numEvevnts);
+		//DEBUG("Poll %d events happend", numEvevnts);
 		fillActiveChannel(numEvevnts, activeChannels);
 	}
 	else if (numEvevnts == 0)
@@ -38,7 +38,7 @@ Timestamp PollPoller::Poll(int32 timeOuts, ChannelVec* activeChannels)
 void PollPoller::UpdateChannel(Channel* channel)
 {
 	Poller::AssertInLoopThread();
-	DEBUG("fd = %d events= %d", channel->GetFd(), channel->GetEvents());
+	//DEBUG("fd = %d events= %d", channel->GetFd(), channel->GetEvents());
 	if (channel->Index() < 0)
 	{
 		assert(m_mapChannel.find(channel->GetFd()) == m_mapChannel.end());
@@ -74,7 +74,7 @@ void PollPoller::UpdateChannel(Channel* channel)
 void PollPoller::RemoveChannel(Channel* channel)
 {
 	Poller::AssertInLoopThread();
-	DEBUG("fd = %d", channel->GetFd());
+	//DEBUG("fd = %d", channel->GetFd());
 	assert(m_mapChannel.find(channel->GetFd()) != m_mapChannel.end());
 	assert(m_mapChannel[channel->GetFd()] == channel);
 	assert(channel->IsNoneEvent());

@@ -2,6 +2,7 @@
 #define __EVENT_LOOP_THREAD_POOL_H__
 
 #include "nocopyable.h"
+#include "type_define.h"
 
 class EventLoop;
 class EventLoopThread;
