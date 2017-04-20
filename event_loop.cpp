@@ -105,13 +105,13 @@ void EventLoop::Quit()
 
 void EventLoop::RunInLoop(const Functor& cb)
 {
+	DEBUG("Threadid:%d Tid:%d",m_threadId,CurrentThread::Tid());
 	if(IsInLoopThread())
 	{
 		cb();
 	}
 	else
 	{
-		//WARN("EventLoop QueueInLoop");
 		QueueInLoop(cb);
 	}
 }
@@ -197,7 +197,7 @@ void EventLoop::Wakeup()
 	{
 		ERROR("EventLoop::wakeup() writes :%ld bytes instead of 8", n);
 	}
-	//WARN("EventLoop Wakeup");
+	//WARN("EventLoop Wakeup Threadid:%d Tid:%d",m_threadId,CurrentThread::Tid());
 }
 
 
@@ -209,7 +209,7 @@ void EventLoop::handleRead()
 	{
 		ERROR("EventLoop::wakeup() writes :%ld bytes instead of 8", n);
 	}
-	//WARN("EventLoop handleRead");
+	//WARN("EventLoop handleRead Threadid:%d Tid:%d",m_threadId,CurrentThread::Tid());
 }
 
 void EventLoop::doPendingFunctor()

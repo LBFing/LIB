@@ -9,7 +9,7 @@ int32 createTimerfd()
 	//CLOCK_REALTIME：相对时间，从1970.1.1到目前的时间。更改系统时间会更改获取的值
 	//TFD_NONBLOCK（非阻塞），TFD_CLOEXEC（同O_CLOEXEC）
 	int32 timerfd = ::timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
-	INFO("createTimerfd %d", timerfd);
+	//INFO("createTimerfd %d", timerfd);
 	if (timerfd < 0)
 	{
 		ERROR("Failed in timerfd_create");
@@ -21,7 +21,7 @@ void readTimerfd(int32 timerfd, Timestamp now)
 {
 	int64 howmany;
 	ssize_t n = ::read(timerfd, &howmany, sizeof(howmany));
-	DEBUG("TimerQueue::handleRead() %lld at %s", howmany, now.ToString().c_str());
+	//DEBUG("TimerQueue::handleRead() %lld at %s", howmany, now.ToString().c_str());
 	if( n != sizeof(howmany))
 	{
 		ERROR("TimerQueue::handleRead() reads %lu bytes instead of 8", n);

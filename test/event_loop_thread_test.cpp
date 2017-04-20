@@ -8,20 +8,20 @@ EventLoop* g_loop;
 
 void print(EventLoop* p = NULL)
 {
-	printf("print: pid = %d, tid = %d, loop = %p\n",getpid(), CurrentThread::Tid(), p);
+	printf("print: pid = %d, tid = %d, loop = %p\n", getpid(), CurrentThread::Tid(), p);
 }
 
 void quit(EventLoop* p)
 {
-  print(p);
-  p->Quit();
+	print(p);
+	p->Quit();
 }
 
 
 int main()
 {
 	InitLogger("/root/study/LIB/log/test.log", "error");
-	 print();
+	print();
 
 	{
 		EventLoopThread thr1;  // never start
@@ -33,13 +33,13 @@ int main()
 		EventLoop* loop = thr2.StartLoop();
 		loop->RunInLoop(std::bind(print, loop));
 		CurrentThread::SleepUsec(500 * 1000);
-  }
+	}
 
-  {
-	// quit() before dtor
-	EventLoopThread thr3;
-	EventLoop* loop = thr3.StartLoop();
-	loop->RunInLoop(std::bind(quit, loop));
-	CurrentThread::SleepUsec(500 * 1000);
-  }
+	{
+		// quit() before dtor
+		EventLoopThread thr3;
+		EventLoop* loop = thr3.StartLoop();
+		loop->RunInLoop(std::bind(quit, loop));
+		CurrentThread::SleepUsec(500 * 1000);
+	}
 }
