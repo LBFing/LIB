@@ -9,6 +9,7 @@
 #include <deque>
 #include <vector>
 #include <string.h>
+#include <strings.h>
 #include <pthread.h>
 #include <time.h>
 #include <limits>
@@ -23,6 +24,7 @@
 #include <unistd.h>
 #include <fcntl.h>           /* For O_* constants */
 #include <errno.h>
+#include <stddef.h>
 #include <algorithm>
 #include <sys/syscall.h>
 #include <sys/prctl.h>
@@ -33,7 +35,8 @@
 #include <sys/stat.h>        /* For mode constants */
 #include <sys/uio.h>
 #include <sys/epoll.h>
-
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 using namespace std;
 

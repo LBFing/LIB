@@ -29,7 +29,7 @@ int main()
 		assert(model.GetNextLoop() == &loop);
 		assert(model.GetNextLoop() == &loop);
 	}
-	
+
 	{
 		printf("Another thread:\n");
 		EventLoopThreadPool model(&loop, "another");
@@ -41,7 +41,7 @@ int main()
 		assert(nextLoop == model.GetNextLoop());
 		assert(nextLoop == model.GetNextLoop());
 		::sleep(3);
-		
+
 	}
 
 	{
@@ -55,9 +55,7 @@ int main()
 		assert(nextLoop != model.GetNextLoop());
 		assert(nextLoop != model.GetNextLoop());
 		assert(nextLoop == model.GetNextLoop());
-		::sleep(3);
 	}
 
-	::sleep(3);
 	return 0;
 }
