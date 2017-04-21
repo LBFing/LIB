@@ -50,18 +50,52 @@ InetAddress::InetAddress(string ip, uint16 port, bool ipv6 /*= false*/)
 std::string InetAddress::ToIP() const
 {
 	char buf[64] = { 0 };
-	SockToIP(buf, sizeof(buf), GetSockAddr());
+	AddrToIP(buf, sizeof(buf), GetSockAddr());
 	return buf;
 }
 
 std::string InetAddress::ToIPPort() const
 {
 	char buf[64] = {0};
-	SockToIPPort(buf, sizeof(buf), GetSockAddr());
+	AddrToIPPort(buf, sizeof(buf), GetSockAddr());
 	return buf;
 }
 
 uint16 InetAddress::ToPort() const
 {
-	return 0;
+	return NetworkToHost16(PortNetEndian());
+}
+
+uint32 InetAddress::IpNetEndian() const
+{
+	assert(Family() == AF_INET);
+	return m_addr.sin_addr.s_addr;
+}
+
+static __thread char t_resolveBuffer[64 * 1024] = {0};
+
+bool InetAddress::Resolve(string hostname, InetAddress* result)
+{
+	assert(result != NULL);
+	struct hostent hent;
+	struct hostent* he;
+	int32 herrno = 0;
+	bzero(&hent, sizeof(hent));
+
+	int32 ret = gethostbyname_r(hostname.c_str(), &hent, t_resolveBuffer, sizeof(t_resolveBuffer), &he, &herrno);
+	if (ret == 0 && he != NULL)
+	{
+		assert(he->h_addrtype == AF_INET && he->h_length == sizeof(uint32_t));
+		result->m_addr.sin_addr = *reinterpret_cast<struct in_addr*>(he->h_addr);
+		return true;
+	}
+	else
+	{
+		if (ret)
+		{
+			ERROR("InetAddress::resolve");
+		}
+		return false;
+	}
+
 }
