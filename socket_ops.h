@@ -2,7 +2,8 @@
 #define __SOCKET_OPS_H__
 
 #include "type_define.h"
-
+#include "nocopyable.h"
+#include "inet_address.h"
 
 inline uint64 HostToNetwork64(uint64 host64)
 {
@@ -53,4 +54,61 @@ void ShutdownWrite(int sockfd);
 int32 GetSocketError(int32 sockfd);
 struct sockaddr_in6 GetLocalAddr(int sockfd);
 struct sockaddr_in6 GetPeerAddr(int sockfd);
+int32 Accept(int32 sockfd, struct sockaddr_in6* addr);
+
+
+//=========================================
+
+class Socket : private Nocopyable
+{
+public:
+	explicit Socket(int32 sockfd) : m_sockfd(sockfd)
+	{}
+	~Socket();
+
+	int GetFd() const { return m_sockfd; }
+
+	bool GetTcpInfo(struct tcp_info* tcp_info) const;
+	bool GetTcpInfoString(char* buf, int32 len) const;
+
+	void BindAddress(const InetAddress& localaddr);
+
+	void Listen();
+
+	int32 Accept(InetAddress* peeraddr);
+
+	void ShutdownWrite();
+
+	void SetTcpNoDelay(bool on);
+
+	void SetReuseAddr(bool on);
+
+	void SetReusePort(bool on);
+
+	void SetKeepAlive(bool on);
+
+
+private:
+	const int32 m_sockfd;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif
