@@ -40,7 +40,9 @@ PROGRAM = 	buffer_ex_test \
 			timer_queue_test \
             event_loop_test \
 			event_loop_thread_test \
-			event_loop_thread_pool_test
+			event_loop_thread_pool_test \
+			inet_addr_test \
+			echo_server_test
 
 
 
@@ -113,6 +115,12 @@ event_loop_thread_test:event_loop_thread_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 
 event_loop_thread_pool_test:event_loop_thread_pool_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+inet_addr_test:inet_addr_test.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+
+echo_server_test:echo_server_test.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 
 

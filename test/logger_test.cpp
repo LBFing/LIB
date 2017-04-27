@@ -3,7 +3,7 @@
 
 void TestLogger()
 {
-	InitLogger("/root/study/LIB/log/test.log", "DEBUG");
+	InitLogger("/root/study/LIB/log/test.log", "debug");
 	DEBUG("++++++++++++++++++++++");
 	WARN("++++++++++++++++++++++");
 	INFO("++++++++++++++++++++++");
