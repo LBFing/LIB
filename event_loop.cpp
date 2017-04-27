@@ -105,7 +105,7 @@ void EventLoop::Quit()
 
 void EventLoop::RunInLoop(const Functor& cb)
 {
-	DEBUG("Threadid:%d Tid:%d",m_threadId,CurrentThread::Tid());
+	DEBUG("Threadid:%d Tid:%d", m_threadId, CurrentThread::Tid());
 	if(IsInLoopThread())
 	{
 		cb();
@@ -216,6 +216,7 @@ void EventLoop::doPendingFunctor()
 {
 	std::vector<Functor> functors;
 	m_callPendingFunctor = true;
+
 	{
 		MutexLockGuard lock(m_mutex);
 		functors.swap(m_pendingFunctor);

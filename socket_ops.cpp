@@ -330,6 +330,7 @@ void Socket::SetReuseAddr(bool on)
 
 void Socket::SetReusePort(bool on)
 {
+
 #ifdef SO_REUSEPORT
 	int optval = on ? 1 : 0;
 	int ret = ::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEPORT, &optval, static_cast<socklen_t>(sizeof(optval)));
@@ -343,6 +344,7 @@ void Socket::SetReusePort(bool on)
 		ERROR("SO_REUSEPORT is not supported.");
 	}
 #endif
+
 }
 
 void Socket::SetKeepAlive(bool on)

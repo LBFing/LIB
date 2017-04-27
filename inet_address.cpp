@@ -27,7 +27,7 @@ InetAddress::InetAddress(uint16 port /*= 0*/, bool loopbackonly /*= false*/, boo
 	{
 		bzero(&m_addr, sizeof(m_addr));
 		m_addr.sin_family = AF_INET;
-		m_addr.sin_addr.s_addr = loopbackonly ? INADDR_LOOPBACK : INADDR_ANY;
+		m_addr.sin_addr.s_addr = HostToNetwork32(loopbackonly ? INADDR_LOOPBACK : INADDR_ANY);
 		m_addr.sin_port = HostToNetwork16(port);
 	}
 }

@@ -55,7 +55,7 @@ int32 GetSocketError(int32 sockfd);
 struct sockaddr_in6 GetLocalAddr(int sockfd);
 struct sockaddr_in6 GetPeerAddr(int sockfd);
 int32 Accept(int32 sockfd, struct sockaddr_in6* addr);
-
+bool IsSelfConnect(int sockfd);
 
 //=========================================
 
